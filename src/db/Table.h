@@ -1,0 +1,66 @@
+#pragma once
+#include <map>
+#include <string>
+#include <iostream>
+#include "DataTypes.h"
+
+
+namespace db {
+
+	/*
+	* ACTIVE MACROS
+	*/
+	#define OBJ_DECL(classname) static classname constant_##classname;
+	#define OBJ_TABLE(classname) 		static inline std::map<std::string, db::ColumnDescription> meta;\
+										static inline bool exist = false; \
+										static inline std::string table_name;\
+
+	#define SET_NAME(classname) classname::table_name = #classname;
+	#define START_DECL(classname) SET_NAME(classname)	\
+									if (! classname::exist) {	\
+										classname::exist = true;
+
+	#define END_DECL(classname) } else { \
+								for (auto& item : classname::meta) { \
+								this->container[item.first] = db::datatypes::create_column(item.second); }}
+
+
+	#define COLUMN(name, type, ...) this->meta[#name] = db::ColumnDescription(#name, type);
+	#define PRIMARY_KEY(name) this->meta[#name].set_pk();
+	#define FOREIGN_KEY(name, tablename_on, colname) this->meta[#name].set_fk(tablename_on::table_name, &tablename_on::meta[#colname]);
+
+
+	// LEGACY MACROS
+	/*
+	#define VARGS_(_10, _9, _8, _7, _6, _5, _4, _3, _2, _1, N, ...) N
+	#define VARGS(...) VARGS_(__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+
+	#define CONCAT_(a, b) a##b
+	#define CONCAT(a, b) CONCAT_(a, b)
+
+	#define MACRO_2(a, b) std::cout << a << ' ' << b;
+
+	#define MACRO_1(a) MACRO_2(a, "test") // Supply default argument
+
+	#define MACRO(...) CONCAT(MACRO_, VARGS(__VA_ARGS__))(__VA_ARGS__)
+
+	#define STRING_2(name,  pk) new String(pk)
+	#define STRING_1(name) STRING_2(name, false)
+
+	#define STRING(name, ...) this->meta[#name] = CONCAT(STRING_, VARGS(__VA_ARGS__))(__VA_ARGS__);
+	#define INT(name, ...) this->meta[#name] = CONCAT(INT_, VARGS(__VA_ARGS__))(__VA_ARGS__);
+	*/
+
+
+	class Table {
+
+	public:
+
+		std::map<std::string, Column*> container;
+		Table() {};
+
+	};
+
+}
+
+
