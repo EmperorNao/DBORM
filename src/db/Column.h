@@ -9,6 +9,7 @@ namespace db {
 	class Column {
 
 
+		
 
 	};
 

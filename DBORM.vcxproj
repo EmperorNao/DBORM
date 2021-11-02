@@ -44,12 +44,15 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Garbage.h" />
+    <ClInclude Include="src\sql\Query.h" />
     <ClInclude Include="src\db\Column.h" />
     <ClInclude Include="src\db\DataTypes.h" />
     <ClInclude Include="src\db\Table.h" />
     <ClInclude Include="test\db_test\User.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\sql\Query.cpp" />
     <ClCompile Include="src\db\Column.cpp" />
     <ClCompile Include="src\db\DataTypes.cpp" />
     <ClCompile Include="src\db\Table.cpp" />
