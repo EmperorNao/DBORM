@@ -3,6 +3,8 @@
 #include <string>
 #include <iostream>
 #include <stdio.h>
+#include <cstddef>
+#include <concepts>
 //#include "DataTypes.h"
 
 
@@ -33,19 +35,7 @@ namespace db {
 	#define PRIMARY_KEY(name) this->meta[#name].set_pk();
 	#define FOREIGN_KEY(name, tablename_on, colname) this->meta[#name].set_fk(tablename_on::table_name, tablename_on::table_name);
 
-	#define SET_STR(obj, name, value) ((db::String*)obj[#name])->set(value);
-#define GET_STR(obj, name) ((db::String*)obj[#name])->get();
-	#define STR(var) db::String*(var)
-	#define INT db::Integer*
-	#define FL db::Float*
 
-	#define BY_TYPE(type) CLASS_##type();
-
-	//#define SET(object, col_name, value) db::ct = object.meta[#col_name]->name; \
-		//					(BY_TYPE(ct)(object[#col_name]) = value;
-
-
-	class Column;
 
 	namespace datatypes {
 
@@ -70,6 +60,57 @@ namespace db {
 			}
 
 		};
+
+		class ValueError {
+
+			std::string message;
+		public:
+			ValueError(std::string m) : message(m) {};
+
+			virtual std::string what() const throw()
+			{
+				return message;
+			}
+
+		};
+
+
+
+		template <typename T>
+		concept convertable = requires(T a) {
+			{ std::to_string(a)};
+		};
+
+		template <convertable T>//*/
+		//template <typename T>
+		std::string serialize(T value) {
+
+			try {
+				return std::to_string(value);
+			}
+			catch (...) {
+
+				throw ValueError("Wrong value was provided to serialization");
+
+			}
+
+		}
+
+
+		/*class DataType {
+
+			ColumnType type;
+		public:
+			DataType(ColumnType t) : type(t) {};
+
+		};
+
+		class String: public DataType {
+
+			String(): DataType(STRING) {}
+			
+
+		};*/
 
 	} // end datatypes
 
@@ -122,6 +163,8 @@ namespace db {
 	};
 
 
+	class Column;
+
 	class Table {
 	
 
@@ -129,7 +172,8 @@ namespace db {
 
 		std::map<std::string, Column*> container;
 		Table() {};
-		virtual Column* operator[](std::string s) final;
+		//Column operator[](std::string name) { return *(this->container[name]); }
+
 		virtual Column* get_real_column(std::string name) { 
 			
 			if (container.find(name) != container.end()) {
@@ -141,18 +185,20 @@ namespace db {
 
 		
 		};
+
 		void update(std::string column_name) {
 
 			// action in case of update column
 
 		}
 
-	};
 
+	};
 
 	class Column {
 
-	protected:
+		std::string value;
+		datatypes::ColumnType type;
 		Table* table;
 		std::string name;
 		bool pk;
@@ -163,136 +209,52 @@ namespace db {
 	public:
 		Column(Table* _table, 
 			std::string _name, 
+			datatypes::ColumnType _type,
 			bool _pk = false, 
 			bool _fk = false, 
 			std::string _fk_table = "",
 			std::string _fk_atribute = "") 
-			: table(_table), name(_name), pk(_pk), fk(_fk), fk_table(_fk_table), fk_atribute(_fk_atribute) {};
+			: table(_table), name(_name), type(_type), pk(_pk), fk(_fk), fk_table(_fk_table), fk_atribute(_fk_atribute) {};
 
-	};
+		Column(Table* _table, const ColumnDescription& desc)
+			: table(_table), name(desc.name), type(desc.type), pk(desc.pk), fk(desc.fk), fk_table(desc.fk_table), fk_atribute(desc.fk_column) {}
 
+		template <datatypes::convertable T>
+		void operator=(T r_value) { 
+			
+			std::cout << "FOCKING UPDATE ON " << r_value << std::endl;
+			try {
+				this->table->get_real_column(this->name)->value = db::datatypes::serialize(r_value);
+			}
+			catch (datatypes::ValueError& e) {
 
-	class String: public Column {
-
-		std::string value;
-	public:
-		String(Table* _table,
-			std::string _name,
-			bool _pk = false,
-			bool _fk = false,
-			std::string _fk_table = "",
-			std::string _fk_atribute = "") 
-			: Column(_table, _name, _pk, _fk, _fk_table, _fk_atribute) {};
-
-		String(Table* _table, ColumnDescription desc)
-			: Column(_table, desc.name, desc.pk, desc.fk, desc.fk_table, desc.fk_column) {};
-
-		void operator=(std::string r) {
-
-			String* real_column = (String*)(this->table->get_real_column(this->name));
-			if (real_column->value != r) {
-
-				std::cout << "Update!\n";
-				real_column->value = r;
+				std::cerr << e.what() << std::endl;
+				return;
 
 			}
 
 		}
 
-		void set(std::string s) {
+		void operator=(std::string r_value) {
 
-			std::cout << "Update!\n";
-			this->value = s;
-
-		}
-
-		std::string get() { return value; };
-
-	};
-
-
-	class Integer : public Column {
-
-		int_fast32_t value;
-	public:
-		Integer(Table* _table,
-			std::string _name,
-			bool _pk = false,
-			bool _fk = false,
-			std::string _fk_table = "",
-			std::string _fk_atribute = "")
-			: Column(_table, _name, _pk, _fk, _fk_table, _fk_atribute) {};
-
-		Integer(Table* _table, ColumnDescription desc)
-			: Column(_table, desc.name, desc.pk, desc.fk, desc.fk_table, desc.fk_column) {};
-
-		void operator=(int_fast32_t r) {
-
-			Integer* real_column = (Integer*)(this->table->get_real_column(this->name));
-			if (real_column->value != r) {
-
-				std::cout << "Update!\n";
-				real_column->value = r;
-
-			}
+			this->table->get_real_column(this->name)->value = r_value;
 
 		}
 
-		void set(int v) {
+		/*template <const char*>
+		void operator=(const char* r_value) {
 
-			std::cout << "Update!\n";
-			this->value = v;
+			std::cout << "FOCKING UPDATE ON " << r_value << std::endl;
+			this->table->get_real_column(this->name)->value = r_value;
 
-		}
-
-		int get() { return value; };
-
+		}*/
 
 
 	};
-
-
-	class Float : public Column {
-
-		 float_t value;
-	public:
-		Float(Table* _table,
-			std::string _name,
-			bool _pk = false,
-			bool _fk = false,
-			std::string _fk_table = "",
-			std::string _fk_atribute = "")
-			: Column(_table, _name, _pk, _fk, _fk_table, _fk_atribute) {};
-
-		Float(Table* _table, ColumnDescription desc)
-			: Column(_table, desc.name, desc.pk, desc.fk, desc.fk_table, desc.fk_column) {};
-
-		void operator=(float_t r) {
-
-			Float* real_column = (Float*)(this->table->get_real_column(this->name));
-			if (real_column->value != r) {
-
-				std::cout << "Update!\n";
-				real_column->value = r;
-
-			}
-
-		}
-
-		void set(float v) {
-
-			std::cout << "Update!\n";
-			this->value = v;
-
-		}
-
-		float get() { return value; };
-
-	};
-
 
 
 	namespace datatypes {
+
 
 		Column* create_column(Table* t, ColumnDescription desc);
 

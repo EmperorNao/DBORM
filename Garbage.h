@@ -1,6 +1,18 @@
 #pragma once
 
 
+
+//#define SET_STR(obj, name, value) ((db::String*)obj[#name])->set(value);
+//#define GET_STR(obj, name) ((db::String*)obj[#name])->get();
+//#define STR(var) db::String*(var)
+//#define INT db::Integer*
+//#define FL db::Float*
+//
+//#define BY_TYPE(type) CLASS_##type();
+//
+////#define SET(object, col_name, value) db::ct = object.meta[#col_name]->name; \
+//		//					(BY_TYPE(ct)(object[#col_name]) = value;
+
 // LEGACY MACROS
 /*
 #define VARGS_(_10, _9, _8, _7, _6, _5, _4, _3, _2, _1, N, ...) N

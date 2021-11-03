@@ -23,8 +23,10 @@ int main(int argc, char* argv[]) {
 		User u1;
 		User u2;
 		UserVisit uv1;
-		SET_STR(u1, name, "32")
-		std::cout << GET_STR(u1, name);
+		u1["name"] = "Alex";
+		u1["id"] = 55;
+		//SET_STR(u1, name, "32")
+		//std::cout << GET_STR(u1, name);
 
 	}
 	else {
