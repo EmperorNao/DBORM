@@ -23,8 +23,12 @@ int main(int argc, char* argv[]) {
 		User u1;
 		User u2;
 		UserVisit uv1;
-		u1["name"] = "Alex";
-		u1["id"] = 55;
+
+		SET(u1, name, "Alex");
+		SET(u1, id, 55);
+		int id = GET(u1, id, int);
+		std::string name = GETS(u1, name, std::string);
+		std::cout << "YES SIR YOUR ID IS " << id << " AND YOUR NAME IS " << name << std::endl;
 		//SET_STR(u1, name, "32")
 		//std::cout << GET_STR(u1, name);
 

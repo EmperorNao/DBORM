@@ -25,14 +25,27 @@ namespace db {
 
 		}
 
-		Column* create_column(Table* t, ColumnDescription desc) {
+		Column* create_column(ColumnDescription desc) {
 
 			if (is_columntype_value_correct(desc.type)) {
-				return new Column(t, desc);
+				return new Column(desc);
 			}
 			throw ColumnTypeError("Not existing columns type was provided while trying create column");
 
 		}
+
+		double deserialize_d(std::string v) {
+
+			return std::stod(v);
+
+		}
+
+		int deserialize_i(std::string v) {
+
+			return std::stoi(v);
+
+		}
+
 
 
 	} // end datatypes
