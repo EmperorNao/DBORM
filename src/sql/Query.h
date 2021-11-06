@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "../db/Table.h"
 
 
 namespace sql {
@@ -19,10 +20,12 @@ namespace sql {
 	class Select : public Query {
 
 	private:
+		std::string table_name;
 		std::vector<std::string> columns;
 	public:
-		Select(std::vector<std::string> _columns) : columns(_columns), Query("select") {};
-		std::vector<std::string> get_columns() { return columns; };
+		Select(std::string _table, std::vector<std::string> _columns) 
+			: table_name(_table), columns(_columns), Query("select") {};
+		std::vector<std::string> get_columns() const { return columns; };
 
 	};
 
@@ -41,28 +44,12 @@ namespace sql {
 	class Where : public Query {
 
 	private:
-		std::string table_join;
-		std::string column_on;	
-		Where(std::string table, std::string _column_on) :
-			table_join(table),
-			column_on(_column_on),
-			Query("join") {};
-
+		db::Statement statement;
+		Where(db::Statement& s) :
+			statement(s),
+			Query("where") {};
+			
 	};
-
-	/*
-	class Condition {
-
-	public:
-		Condition* inner;
-		std::char combine;
-
-
-	};
-	User["name"] > 12
-
-	User.select("*").where(User["name"] > 12);
-	*/
 
 
 
