@@ -31,7 +31,7 @@ namespace db {
 								this->container[item.first] = db::datatypes::create_column(item.second); }}
 
 
-	#define COLUMN(name, type, ...) this->meta[#name] = db::ColumnDescription(#name, type);
+	#define COLUMN(name, type, ...) this->meta[#name] = db::ColumnDescription(table_name, #name, type);
 	#define PRIMARY_KEY(name) this->meta[#name].set_pk();
 	#define FOREIGN_KEY(name, tablename_on, colname) this->meta[#name].set_fk(tablename_on::table_name, tablename_on::table_name);
 	#define SET(object, column_name, value) object.set(#column_name, value);
@@ -152,6 +152,7 @@ namespace db {
 
 	public:
 		std::string name;
+		std::string table_name;
 		datatypes::ColumnType type;
 		bool pk;
 		bool fk;
@@ -161,13 +162,14 @@ namespace db {
 		ColumnDescription() {};
 
 		ColumnDescription(
+			std::string _table_name,
 			std::string _name,
 			datatypes::ColumnType _type,
 			bool _pk = false,
 			bool _fk = false,
 			std::string _fk_table = "",
 			std::string _fk_column = ""
-		) : name(_name), type(_type), pk(_pk), fk(_fk), fk_table(_fk_table), fk_column(_fk_column)
+		) : name(_name), table_name(_table_name), type(_type), pk(_pk), fk(_fk), fk_table(_fk_table), fk_column(_fk_column)
 		{};
 
 		datatypes::ColumnType get_type() { return type; }
@@ -180,11 +182,47 @@ namespace db {
 
 	};
 
+	class Statement {
+
+	private:
+		std::string state;
+	public:
+		Statement(std::string _state) :
+ state(_state) {};
+
+		std::string get_state() const {
+
+			return this->state;
+
+		}
+
+
+		Statement operator&&(const Statement& r) {
+
+			return Statement("(" + this->state + " )" + " and " + "(" + r.state + ")");
+
+		}
+
+		Statement operator!() {
+
+			return Statement("not (" + this->state + " )");
+
+		}
+
+		Statement operator||(const Statement& r) {
+
+			return Statement("(" + this->state + " )" + " or " + "(" + r.state + ")");
+
+		}
+
+	};
+
 
 	class Column {
 
 		std::string value;
 		datatypes::ColumnType type;
+		std::string table_name;
 		std::string name;
 		bool pk;
 		bool fk;
@@ -192,23 +230,43 @@ namespace db {
 		std::string fk_atribute;
 
 	public:
-		Column(std::string _name,
+		Column(
+			std::string _table_name,
+			std::string _name,
 			datatypes::ColumnType _type,
 			bool _pk = false,
 			bool _fk = false,
 			std::string _fk_table = "",
 			std::string _fk_atribute = "")
-			: name(_name), type(_type), pk(_pk), fk(_fk), fk_table(_fk_table), fk_atribute(_fk_atribute) {};
+			: name(_name), table_name(_table_name), type(_type), pk(_pk), 
+			fk(_fk), fk_table(_fk_table), fk_atribute(_fk_atribute) {};
 
 		Column(const ColumnDescription& desc)
-			: name(desc.name), type(desc.type), pk(desc.pk), fk(desc.fk), fk_table(desc.fk_table), fk_atribute(desc.fk_column) {}
+			: name(desc.name), table_name(desc.table_name), type(desc.type), pk(desc.pk), 
+			fk(desc.fk), fk_table(desc.fk_table), fk_atribute(desc.fk_column) {}
+
+		// Main parts
+		// mutators and accessors
+
+		std::string get_table() const {
+
+			return this->table_name;
+
+		}
+
+		template <datatypes::convertable_to_str T>
+		std::string serialize(T v) const {
+
+			return db::datatypes::serialize(v);
+
+		}
 
 		template <datatypes::convertable_to_str T>
 		void set(T r_value) {
 
 			std::cout << "FOCKING UPDATE ON " << r_value << " IN operator=" << std::endl;
 			try {
-				this->value = db::datatypes::serialize(r_value);
+				this->value = this->serialize(r_value);
 			}
 			catch (datatypes::ValueError& e) {
 
@@ -220,7 +278,7 @@ namespace db {
 		}
 
 		template <datatypes::convertable_to_str T>
-		T get() {
+		T get() const {
 
 			std::string value = this->value;
 			switch (this->type)
@@ -235,31 +293,39 @@ namespace db {
 
 		}
 
-		std::string get() {
+		std::string get_string() const {
 
 			return this->value;
 
 		}
 
-
-		void set(std::string r_value) {
+		void set_string(std::string r_value) {
 
 			this->value = r_value;
 
 		}
 
-		/*template <const char*>
-		void operator=(const char* r_value) {
 
-			std::cout << "FOCKING UPDATE ON " << r_value << std::endl;
-			this->table->get_real_column(this->name)->value = r_value;
+		// Generating statements
+		template <datatypes::convertable_to_str T>
+		Statement operator>(T r) { return Statement(this->table_name + "." + this->name + " > " + this->serialize(r)); };
 
-		}*/
+		template <datatypes::convertable_to_str T>
+		Statement operator<(T r) { return Statement(this->table_name + "." + this->name + " < " + this->serialize(r)); };
 
+		template <datatypes::convertable_to_str T>
+		Statement operator==(T r) { return Statement(this->table_name + "." + this->name + " = " + this->serialize(r)); };
+
+		template <datatypes::convertable_to_str T>
+		Statement operator>=(T r) { return Statement(this->table_name + "." + this->name + " >= " + this->serialize(r)); };
+
+		template <datatypes::convertable_to_str T>
+		Statement operator<=(T r) { return Statement(this->table_name + "." + this->name + " <= " + this->serialize(r)); };
+
+		Statement like(std::string r) { return Statement(this->table_name + "." + this->name + " like " + "'" + r + "'"); }
 
 	};
 
-	
 
 	class Table {
 	
@@ -268,7 +334,7 @@ namespace db {
 
 		std::map<std::string, Column*> container;
 		Table() {};
-		//Column operator[](std::string name) { return *(this->container[name]); }
+		Column operator[](std::string name) { return *(this->container[name]); }
 
 		virtual Column* get_real_column(std::string name) { 
 			
@@ -302,7 +368,7 @@ namespace db {
 
 		void set(std::string name, std::string r_value) {
 
-			this->container["name"]->set(r_value);
+			this->container["name"]->set_string(r_value);
 
 		}
 
@@ -315,20 +381,11 @@ namespace db {
 
 		std::string get(std::string name) {
 
-			return this->container[name]->get();
+			return this->container[name]->get_string();
 
 		}
-
-		void update(std::string column_name) {
-
-			// action in case of update column
-
-		}
-
 
 	};
-
-	
 
 	namespace datatypes {
 
