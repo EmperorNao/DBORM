@@ -29,43 +29,43 @@
 
 
 
-class User : public db::Table {
+class TestU : public db::Table {
 
 public:
 
-	OBJ_TABLE(User)
-	User() {
+	OBJ_TABLE(TestU)
+	TestU() {
 
-		START_DECL(User)
+		START_DECL(TestU)
 			COLUMN(id, db::datatypes::INTEGER)
 			COLUMN(name, db::datatypes::STRING)
 			PRIMARY_KEY(id)
-		END_DECL(User)
-
+		END_DECL(TestU)
 	}
 
 };
 
-OBJ_DECL(User);
+OBJ_DECL(TestU);
 
 
-class UserVisit : public db::Table {
+class TestUVisit : public db::Table {
 
 public:
 
-	OBJ_TABLE()
-	UserVisit() {
+	OBJ_TABLE(TestUVisit)
+	TestUVisit() {
 
-		START_DECL(UserVisit)
+		START_DECL(TestUVisit)
 			COLUMN(id, db::datatypes::INTEGER)
 			COLUMN(user_id, db::datatypes::INTEGER)
 			COLUMN(day, db::datatypes::INTEGER)
+			COLUMN(money_paid, db::datatypes::FLOAT)
 			PRIMARY_KEY(id)
-			FOREIGN_KEY(user_id, User, id)
-		END_DECL(UserVisit)
+			FOREIGN_KEY(user_id, TestU, id)
+		END_DECL(TestUVisit)
 
 	}
 
 };
 
-OBJ_DECL(UserVisit)
+OBJ_DECL(TestUVisit)
