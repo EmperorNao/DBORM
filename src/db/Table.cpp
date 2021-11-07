@@ -1,5 +1,7 @@
 #include "Table.h"
 #include <iostream>
+#include <vector>
+#include <set>
 
 
 namespace db {
@@ -48,7 +50,42 @@ namespace db {
 
 
 
+
 	} // end datatypes
+
+	std::vector<std::string> split(std::string s, std::set<char> delimeters) {
+
+		std::vector<std::string> container;
+		std::string cur = "";
+		int i = 0;
+		while (i < s.size()) {
+
+			if (delimeters.find(s[i]) != delimeters.end()) {
+
+				if (cur.size()) {
+
+					container.push_back(cur);
+
+				}
+				cur = "";
+
+			}
+			else {
+
+				cur += s[i];
+
+			}
+			++i;
+
+		}
+		if (cur.size()) {
+
+			container.push_back(cur);
+
+		}
+		return container;
+
+	}
 
 	/*
 	Column* Table::operator[](std::string name) {

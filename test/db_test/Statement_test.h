@@ -1,5 +1,5 @@
 #pragma once
-#include "User.h"
+#include "../User.h"
 #include "../../src/db/Table.h"
 #include <gtest/gtest.h>
 

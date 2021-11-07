@@ -10,10 +10,12 @@ namespace sql {
 
 	private:
 		std::string base_protocol;
+		Query* parent;
 
 	public:
-		Query(std::string base) : base_protocol(base) {};
+		Query(std::string base, Query* q = nullptr) : base_protocol(base), parent(q) {};
 		std::string get_protocol() { return base_protocol; };
+		Query* get_parent() { return parent; }
 
 	};
 
@@ -23,8 +25,8 @@ namespace sql {
 		std::string table_name;
 		std::vector<std::string> columns;
 	public:
-		Select(std::string _table, std::vector<std::string> _columns) 
-			: table_name(_table), columns(_columns), Query("select") {};
+		Select(std::string _table, std::vector<std::string> _columns, Query* q = nullptr) 
+			: table_name(_table), columns(_columns), Query("select", q) {};
 		std::vector<std::string> get_columns() const { return columns; };
 
 	};
@@ -32,12 +34,14 @@ namespace sql {
 	class Join : public Query {
 
 	private:
-		std::string table_join;
+		std::string main_table;
+		std::string additional_table;
 		std::string column_on;
-		Join(std::string table, std::string _column_on) :
+	public:
+		Join(std::string m_table, std::string add_table, std::string _column_on, Query* q = nullptr) :
 			table_join(table),
 			column_on(_column_on),
-			Query("join") {};
+			Query("join", q) {};
 
 	};
 
@@ -45,13 +49,11 @@ namespace sql {
 
 	private:
 		db::Statement statement;
-		Where(db::Statement& s) :
+	public:
+		Where(db::Statement& s, Query* q = nullptr) :
 			statement(s),
-			Query("where") {};
+			Query("where", q) {};
 			
 	};
-
-
-
 
 }

@@ -11,6 +11,7 @@
 
 namespace db {
 
+	std::vector<std::string> split(std::string s, std::set<char> delimeters);
 	/*
 	* ACTIVE MACROS
 	*/
@@ -31,12 +32,15 @@ namespace db {
 								this->container[item.first] = db::datatypes::create_column(item.second); }}
 
 
-	#define COLUMN(name, type, ...) this->meta[#name] = db::ColumnDescription(table_name, #name, type);
+	#define COL(name, type, ...) this->meta[#name] = db::ColumnDescription(table_name, #name, type);
 	#define PRIMARY_KEY(name) this->meta[#name].set_pk();
 	#define FOREIGN_KEY(name, tablename_on, colname) this->meta[#name].set_fk(tablename_on::table_name, tablename_on::table_name);
 	#define SET(object, column_name, value) object.set(#column_name, value);
 	#define	GET(object, column_name, type) object.get<type>(#column_name);
 	#define	GETS(object, column_name, type) object.get(#column_name);
+
+	#define TBL(classname) classname::table_name
+	#define COLUMNS(...) db::split(#__VA_ARGS__, {' ', ','}) 
 
 
 

@@ -37,8 +37,8 @@ public:
 	TestU() {
 
 		START_DECL(TestU)
-			COLUMN(id, db::datatypes::INTEGER)
-			COLUMN(name, db::datatypes::STRING)
+			COL(id, db::datatypes::INTEGER)
+			COL(name, db::datatypes::STRING)
 			PRIMARY_KEY(id)
 		END_DECL(TestU)
 	}
@@ -56,10 +56,10 @@ public:
 	TestUVisit() {
 
 		START_DECL(TestUVisit)
-			COLUMN(id, db::datatypes::INTEGER)
-			COLUMN(user_id, db::datatypes::INTEGER)
-			COLUMN(day, db::datatypes::INTEGER)
-			COLUMN(money_paid, db::datatypes::FLOAT)
+			COL(id, db::datatypes::INTEGER)
+			COL(user_id, db::datatypes::INTEGER)
+			COL(day, db::datatypes::INTEGER)
+			COL(money_paid, db::datatypes::FLOAT)
 			PRIMARY_KEY(id)
 			FOREIGN_KEY(user_id, TestU, id)
 		END_DECL(TestUVisit)
