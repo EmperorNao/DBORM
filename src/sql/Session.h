@@ -7,8 +7,56 @@
 
 namespace sql {
 
+	class QueryBuilder {
+
+	public:
+		QueryBuilder();
+		std::string build(Query* q) {
+
+			if (q == nullptr) {
+
+				throw QueryError("Empty query was provided in builder");
+
+			}
+			std::vector<Query*> list;
+			while (q->get_parent() != nullptr) {
+
+				list.push_back(q);
+				q = q->get_parent();
+
+			}
+			std::reverse(list.begin(), list.end());
+
+			return this->convert(list);
+
+		}
+
+		std::string convert(std::vector<Query*> list) {
+
+			Query* q = list[0];
+			QueryType p = q->get_protocol();
+			if (p != SELECT and p != INSERT and p != DELETE) {
+
+				// TODO
+
+			}
+			
+
+		}
+
+
+	};
+
 
 	class Engine {
+
+	public:
+		Engine() {};
+		void execute(Query* q) {
+
+
+
+		}
 
 	};
 
@@ -35,19 +83,6 @@ namespace sql {
 		Session* join(std::string main_table, std::string additional_table, std::vector<std::string>);
 		Session* where(db::Statement st);
 		Session* execute(); 
-
-	};
-
-	class QueryError {
-
-		std::string message;
-	public:
-		QueryError(std::string m) : message(m) {};
-
-		virtual std::string what() const throw()
-		{
-			return message;
-		}
 
 	};
 

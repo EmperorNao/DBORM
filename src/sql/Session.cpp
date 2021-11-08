@@ -35,8 +35,8 @@ namespace sql {
 
 	sql::Session* sql::Session::join(std::string main_table, std::string additional_table, std::vector<std::string> col) {
 
-		std::string cur = this->current->get_protocol();
-		if (cur != "select" and cur != "join") {
+		QueryType cur = this->current->get_protocol();
+		if (cur != SELECT and cur != JOIN) {
 
 			throw QueryError("Can't join if last query was not select or join");
 
@@ -54,8 +54,8 @@ namespace sql {
 
 	sql::Session* sql::Session::where(db::Statement st) { 
 			
-		std::string cur = this->current->get_protocol();
-		if (cur != "select" and cur != "join") {
+		QueryType cur = this->current->get_protocol();
+		if (cur != SELECT and cur != JOIN) {
 
 			throw QueryError("Can't use where if last query was not select or join");
 
@@ -73,6 +73,13 @@ namespace sql {
 			this->engine->execute(this->current);
 
 		}
+		catch (QueryError& qe) {
+
+			throw qe;
+
+		}
+
+		this->current = nullptr;
 		return this;  
 	
 	};

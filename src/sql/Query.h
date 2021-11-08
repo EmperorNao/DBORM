@@ -6,15 +6,36 @@
 
 namespace sql {
 
+	class QueryError {
+
+		std::string message;
+	public:
+		QueryError(std::string m) : message(m) {};
+
+		virtual std::string what() const throw()
+		{
+			return message;
+		}
+
+	};
+
+	enum QueryType {
+		INSERT,
+		DELETE,
+		SELECT,
+		JOIN,
+		WHERE
+	};
+
 	class Query {
 
 	private:
-		std::string base_protocol;
+		QueryType base_protocol;
 		Query* parent;
 
 	public:
-		Query(std::string base, Query* q = nullptr) : base_protocol(base), parent(q) {};
-		std::string get_protocol() { return base_protocol; };
+		Query(QueryType base, Query* q = nullptr) : base_protocol(base), parent(q) {};
+		QueryType get_protocol() { return base_protocol; };
 		Query* get_parent() { return parent; }
 
 	};
@@ -26,7 +47,7 @@ namespace sql {
 		std::vector<std::string> columns;
 	public:
 		Select(std::string _table, std::vector<std::string> _columns, Query* q = nullptr) 
-			: table_name(_table), columns(_columns), Query("select", q) {};
+			: table_name(_table), columns(_columns), Query(SELECT, q) {};
 		std::vector<std::string> get_columns() const { return columns; };
 
 	};
@@ -39,9 +60,10 @@ namespace sql {
 		std::string column_on;
 	public:
 		Join(std::string m_table, std::string add_table, std::string _column_on, Query* q = nullptr) :
-			table_join(table),
+			main_table(m_table),
+			additional_table(add_table),
 			column_on(_column_on),
-			Query("join", q) {};
+			Query(JOIN, q) {};
 
 	};
 
@@ -52,7 +74,7 @@ namespace sql {
 	public:
 		Where(db::Statement& s, Query* q = nullptr) :
 			statement(s),
-			Query("where", q) {};
+			Query(WHERE, q) {};
 			
 	};
 
