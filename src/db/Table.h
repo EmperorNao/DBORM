@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <cstddef>
 #include <concepts>
+#include <vector>
+#include <set>
 //#include "DataTypes.h"
 
 
@@ -17,7 +19,7 @@ namespace db {
 	*/
 	#define OBJ_DECL(classname) static classname constant_##classname;
 	#define OBJ_TABLE(classname) public: \
-										static inline std::map<std::string, db::ColumnDescription> meta;\
+										static inline db::meta_info meta;\
 										static inline bool exist = false; \
 										static inline std::string table_name; \
 										//static Session* session;
@@ -39,8 +41,9 @@ namespace db {
 	#define	GET(object, column_name, type) object.get<type>(#column_name);
 	#define	GETS(object, column_name, type) object.get(#column_name);
 
-	#define TBL(classname) classname::table_name
+	#define TBL(classname) classname::table_name, classname::meta
 	#define COLUMNS(...) db::split(#__VA_ARGS__, {' ', ','}) 
+	#define STATEMENT(classname, colname, op, value) constant_##classname[#colname] op value
 
 
 
@@ -185,6 +188,8 @@ namespace db {
 		}
 
 	};
+	typedef std::map<std::string, db::ColumnDescription> meta_info;
+
 
 	class Statement {
 

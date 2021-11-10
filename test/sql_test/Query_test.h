@@ -23,3 +23,13 @@ TEST(QueryTest, QueryJoin) {
 }
 
 
+TEST(QueryTest, QueryWhere) {
+
+	sql::Engine e;
+	sql::Session* s = sql::create_session(&e);
+	TestU u;
+	s->select(TBL(TestU), COLUMNS(name))->where(u["id"] < 35);
+	// TODO macro Statement and check
+
+}
+

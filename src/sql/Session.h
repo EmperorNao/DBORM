@@ -2,51 +2,10 @@
 #include "../db/Table.h"
 #include "Query.h"
 #include <initializer_list>
-
+#include "QueryBuilder.h"
 
 
 namespace sql {
-
-	class QueryBuilder {
-
-	public:
-		QueryBuilder();
-		std::string build(Query* q) {
-
-			if (q == nullptr) {
-
-				throw QueryError("Empty query was provided in builder");
-
-			}
-			std::vector<Query*> list;
-			while (q->get_parent() != nullptr) {
-
-				list.push_back(q);
-				q = q->get_parent();
-
-			}
-			std::reverse(list.begin(), list.end());
-
-			return this->convert(list);
-
-		}
-
-		std::string convert(std::vector<Query*> list) {
-
-			Query* q = list[0];
-			QueryType p = q->get_protocol();
-			if (p != SELECT and p != INSERT and p != DELETE) {
-
-				// TODO
-
-			}
-			
-
-		}
-
-
-	};
-
 
 	class Engine {
 
@@ -75,12 +34,20 @@ namespace sql {
 		void rollback() {};
 		void commit() {};
 
+		Query* get_cur_query() { 
+
+			Query* t = current;
+			this->current = nullptr;
+			return t;
+		
+		}
+
 		//void add_info(std::string table, std::map<std::string, db::ColumnDescription> meta);
 		Session* update();
 		Session* del();
-		Session* select(std::string, std::vector<std::string>);
+		Session* select(std::string, db::meta_info meta, std::vector<std::string>);
 
-		Session* join(std::string main_table, std::string additional_table, std::vector<std::string>);
+		Session* join(std::string main_table, db::meta_info main_meta, std::string additional_table, db::meta_info add_meta, std::vector<std::string>);
 		Session* where(db::Statement st);
 		Session* execute(); 
 

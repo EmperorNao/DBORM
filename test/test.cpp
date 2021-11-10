@@ -3,6 +3,7 @@
 #include <libpq-fe.h>
 #include "db_test/Statement_test.h"
 #include "sql_test/Query_test.h"
+#include "sql_test/QueryBuilder_test.h"
 
 
 static void

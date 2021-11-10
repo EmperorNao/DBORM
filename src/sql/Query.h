@@ -23,9 +23,12 @@ namespace sql {
 		INSERT,
 		DELETE,
 		SELECT,
+		UPDATE,
 		JOIN,
 		WHERE
 	};
+
+	std::string str_query(QueryType type);
 
 	class Query {
 
@@ -49,6 +52,7 @@ namespace sql {
 		Select(std::string _table, std::vector<std::string> _columns, Query* q = nullptr) 
 			: table_name(_table), columns(_columns), Query(SELECT, q) {};
 		std::vector<std::string> get_columns() const { return columns; };
+		std::string get_table() const { return table_name; }
 
 	};
 
@@ -56,14 +60,21 @@ namespace sql {
 
 	private:
 		std::string main_table;
+		std::string main_column;
 		std::string additional_table;
-		std::string column_on;
+		std::string additional_column;
 	public:
-		Join(std::string m_table, std::string add_table, std::string _column_on, Query* q = nullptr) :
+		Join(std::string m_table, std::string _main_column, std::string add_table, std::string _column_on, Query* q = nullptr) :
 			main_table(m_table),
+			main_column(_main_column),
 			additional_table(add_table),
-			column_on(_column_on),
+			additional_column(_column_on),
 			Query(JOIN, q) {};
+
+		std::string get_main_table() const { return main_table; }
+		std::string get_additional_table() const { return additional_table; }
+		std::string get_main_column() const { return main_column; }
+		std::string get_additional_column() const { return additional_column; }
 
 	};
 
@@ -75,7 +86,9 @@ namespace sql {
 		Where(db::Statement& s, Query* q = nullptr) :
 			statement(s),
 			Query(WHERE, q) {};
-			
+
+		std::string get_state()  const { return statement.get_state();  }
+
 	};
 
 }
