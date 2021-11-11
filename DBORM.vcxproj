@@ -44,21 +44,28 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\sql\psql\PsqlEngine.h" />
+    <ClInclude Include="src\db\Column.h" />
     <ClInclude Include="Garbage.h" />
     <ClInclude Include="src\sql\QueryBuilder.h" />
     <ClInclude Include="src\sql\Session.h" />
     <ClInclude Include="src\sql\Query.h" />
     <ClInclude Include="src\db\Table.h" />
+    <ClInclude Include="test\TestEngine.h" />
+    <ClInclude Include="test\db_test\Table_test.h" />
     <ClInclude Include="test\sql_test\QueryBuilder_test.h" />
     <ClInclude Include="test\sql_test\Query_test.h" />
     <ClInclude Include="test\db_test\Statement_test.h" />
     <ClInclude Include="test\User.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\sql\psql\PsqlEngine.cpp" />
+    <ClCompile Include="src\db\Column.cpp" />
     <ClCompile Include="src\sql\QueryBuilder.cpp" />
     <ClCompile Include="src\sql\Session.cpp" />
     <ClCompile Include="src\sql\Query.cpp" />
     <ClCompile Include="src\db\Table.cpp" />
+    <ClCompile Include="test\TestEngine.cpp" />
     <ClCompile Include="test\test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">false</ExcludedFromBuild>

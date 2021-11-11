@@ -11,11 +11,7 @@ namespace sql {
 
 	public:
 		Engine() {};
-		void execute(Query* q) {
-
-
-
-		}
+		virtual void execute(Query* q) = 0;
 
 	};
 

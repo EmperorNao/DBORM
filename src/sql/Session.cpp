@@ -20,12 +20,6 @@ namespace sql {
 
 		}
 
-		for (auto& el : cols) {
-
-			std::cout << el << "\n";
-
-		}
-
 		this->current = new Select(table_name, cols, this->current);
 
 		return this;

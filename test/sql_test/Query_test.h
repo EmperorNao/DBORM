@@ -1,14 +1,16 @@
 #pragma once
-#include "../User.h"
+#include "../TestUser.h"
 #include "../../src/db/Table.h"
 #include "../../src/sql/Session.h"
+#include "../TestEngine.h"
 #include <gtest/gtest.h>
 
 
 TEST(QueryTest, QuerySelect) {
 
-	sql::Engine e;
-	sql::Session* s = sql::create_session(&e);
+	using test::TestU;
+	sql::Engine* e = new test::TestEngine();
+	sql::Session* s = sql::create_session(e);
 	s->select(TBL(TestU), COLUMNS(first, second, third));
 
 }
@@ -16,8 +18,11 @@ TEST(QueryTest, QuerySelect) {
 
 TEST(QueryTest, QueryJoin) {
 
-	sql::Engine e;
-	sql::Session* s = sql::create_session(&e);
+	using test::TestU;
+	using test::TestUVisit;
+
+	sql::Engine* e = new test::TestEngine();
+	sql::Session* s = sql::create_session(e);
 	s->select(TBL(TestU), COLUMNS(name))->join(TBL(TestU), TBL(TestUVisit), COLUMNS(user_id));
 
 }
@@ -25,11 +30,11 @@ TEST(QueryTest, QueryJoin) {
 
 TEST(QueryTest, QueryWhere) {
 
-	sql::Engine e;
-	sql::Session* s = sql::create_session(&e);
-	TestU u;
+	using test::TestU;
+	sql::Engine* e = new test::TestEngine();
+	sql::Session* s = sql::create_session(e);
+	test::TestU u;
 	s->select(TBL(TestU), COLUMNS(name))->where(u["id"] < 35);
-	// TODO macro Statement and check
 
 }
 

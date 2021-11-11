@@ -106,7 +106,7 @@ namespace sql {
 					throw QueryError("Can't do where in insert query");
 
 				}
-				where = (Where*)where;
+				where = (Where*)q;
 				query += " " + str_query(cur) + " " + where->get_state();
 
 				break;
