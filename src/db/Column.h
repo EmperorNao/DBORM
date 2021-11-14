@@ -23,7 +23,7 @@ namespace db {
 		};
 		bool is_columntype_value_correct(ColumnType v);
 
-		class ColumnTypeError : std::exception {
+		class ColumnTypeError : public std::exception {
 
 			std::string message;
 		public:
@@ -36,7 +36,7 @@ namespace db {
 
 		};
 
-		class ValueError : std::exception {
+		class ValueError : public std::exception {
 
 			std::string message;
 		public:
@@ -74,7 +74,7 @@ namespace db {
 	} // end datatypes
 
 
-	class ColumnNameError : std::exception {
+	class ColumnNameError : public std::exception {
 
 		std::string message;
 	public:

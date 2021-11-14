@@ -5,7 +5,7 @@ namespace sql {
 
 	typedef long long ll;
 
-	class ResultError : std::exception {
+	class ResultError : public std::exception {
 
 		std::string message;
 	public:
@@ -49,8 +49,8 @@ namespace sql {
 
 		Result() {};
 		std::vector<std::string> get_columns() { return columns; }
-		ll get_ncols() { return rows; }
-		ll get_nrows() { return cols; }
+		ll get_ncols() { return cols; }
+		ll get_nrows() { return rows; }
 		virtual std::string get_value(ll row, ll col) = 0;
 		virtual std::string get_value(ll row, std::string col) = 0;
 		virtual void free() = 0;

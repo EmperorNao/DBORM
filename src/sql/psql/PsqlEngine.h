@@ -30,7 +30,7 @@ namespace sql {
 				this->set_nrows(PQntuples(result));
 				this->set_ncols(PQnfields(res));
 
-				std::vector<std::string> columns(this->get_columns());
+				std::vector<std::string> columns(this->get_ncols());
 				for (ll col = 0; col < columns.size(); ++col) {
 
 					columns[col] = PQfname(result, col);
@@ -96,10 +96,16 @@ namespace sql {
 
 			void out() {
 
+				auto columns = get_columns();
+				for (int j = 0; j < get_ncols(); j++) {
+					printf("%-15s", columns[j].c_str());
+
+				}
+				printf("\n");
 				for (int i = 0; i < get_nrows(); i++) {
 
 					for (int j = 0; j < get_ncols(); j++) {
-						printf("%-15s", get_value(i, j));
+						printf("%-10s", get_value(i, j).c_str());
 
 					}
 					printf("\n");

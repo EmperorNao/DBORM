@@ -6,7 +6,7 @@
 
 namespace sql {
 
-	class QueryError : std::exception {
+	class QueryError : public std::exception {
 
 		std::string message;
 	public:
