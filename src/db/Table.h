@@ -69,7 +69,7 @@ namespace db {
 				return this->container[name];
 
 			}
-			throw ColumnNameError(name);
+			throw new ColumnNameError(name);
 
 		
 		};

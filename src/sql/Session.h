@@ -3,18 +3,10 @@
 #include "Query.h"
 #include <initializer_list>
 #include "QueryBuilder.h"
+#include "Engine.h"
 
 
 namespace sql {
-
-	class Engine {
-
-	public:
-		Engine() {};
-		virtual void execute(Query* q) = 0;
-
-	};
-
 
 	class Session {
 
@@ -22,13 +14,17 @@ namespace sql {
 		
 		Query* current;
 		Engine* engine;
+		std::vector<Result*> results;
+		bool autotransaction = false;
+
 
 	public:
-		Session(Engine* e): engine(e) { current = nullptr; };
-		void begin() {};
-		void end() {};
-		void rollback() {};
-		void commit() {};
+		Session(Engine* e, bool autotrans = false): engine(e), autotransaction(autotrans) { current = nullptr; };
+		~Session() { this->free_all_result(); }
+		void begin() { this->engine->begin(); };
+		void end() { this->engine->end(); };
+		void commit() { this->engine->commit(); };
+		void rollback() { this->engine->rollback(); };
 
 		Query* get_cur_query() { 
 
@@ -45,11 +41,27 @@ namespace sql {
 
 		Session* join(std::string main_table, db::meta_info main_meta, std::string additional_table, db::meta_info add_meta, std::vector<std::string>);
 		Session* where(db::Statement st);
-		Session* execute(); 
+		Result* execute();
+
+		void free_all_result() {
+
+			for (auto& el : results) {
+
+				try {
+					el->free();
+				}
+				catch (ResultError& e) {
+
+					// pass
+					// situation when user already freed res
+
+				}
+
+			}
+			results = {};
+
+		}
 
 	};
 
-	Session* create_session(Engine* e);
-
 }
-

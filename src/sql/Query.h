@@ -6,16 +6,17 @@
 
 namespace sql {
 
-	class QueryError {
+	class QueryError : std::exception {
 
 		std::string message;
 	public:
 		QueryError(std::string m) : message(m) {};
 
-		virtual std::string what() const throw()
+		virtual const char* what() const throw()
 		{
-			return message;
+			return message.c_str();
 		}
+
 
 	};
 

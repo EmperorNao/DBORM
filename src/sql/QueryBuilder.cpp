@@ -7,7 +7,7 @@ namespace sql {
 
 		if (q == nullptr) {
 
-			throw QueryError("Empty query was provided in builder");
+			throw new QueryError("Empty query was provided in builder");
 
 		}
 		std::vector<Query*> list;
@@ -36,7 +36,7 @@ namespace sql {
 		QueryType cur = q->get_protocol();
 		if (cur != SELECT and cur != INSERT and cur != DELETE) {
 
-			throw QueryError("Wrong type of query was first");
+			throw new QueryError("Wrong type of query was first");
 
 		}
 		else {
@@ -50,12 +50,22 @@ namespace sql {
 				std::string table_name = select->get_table();
 				for (int i = 0; i < columns.size() - 1; ++i) {
 
-					query += " " + table_name + "." + columns[i] + ",";
+					if (columns[i] != "*") {
+						query += " " + table_name + "." + columns[i] + ",";
+					}
+					else {
+						query += " " + columns[i] + ",";
+					}
 
 				}
 				if (columns.size()) {
 
-					query += " " + table_name + "." + columns[columns.size() - 1];
+					if (columns[columns.size() - 1] != "*") {
+						query += " " + table_name + "." + columns[columns.size() - 1];
+					}
+					else {
+						query += " " + columns[columns.size() - 1];
+					}
 
 				}
 				query += " FROM " + table_name;
@@ -64,7 +74,7 @@ namespace sql {
 			else {
 
 				// TODO insert and delete queries
-				throw QueryError("Still in develepoment");
+				throw new QueryError("Still in develepoment");
 
 			}
 
@@ -79,19 +89,19 @@ namespace sql {
 			cur = q->get_protocol();
 			switch (cur) {
 			case INSERT:
-				throw QueryError("Misplaced insert in query");
+				throw new QueryError("Misplaced insert in query");
 			case DELETE:
-				throw QueryError("Misplaced delete in query");
+				throw new QueryError("Misplaced delete in query");
 			case SELECT:
 				if (last != SELECT) {
 
-					throw QueryError("Misplaced select in query");
+					throw new QueryError("Misplaced select in query");
 
 				}
 			case JOIN:
 				if (start != SELECT and last != JOIN) {
 
-					throw QueryError("Can't join after something other then select and join");
+					throw new QueryError("Can't join after something other then select and join");
 
 				}
 				join = (Join*)q;
@@ -103,7 +113,7 @@ namespace sql {
 			case WHERE:
 				if (start == INSERT) {
 
-					throw QueryError("Can't do where in insert query");
+					throw new QueryError("Can't do where in insert query");
 
 				}
 				where = (Where*)q;
@@ -111,7 +121,7 @@ namespace sql {
 
 				break;
 			default:
-				throw QueryError("Unknown query type was proveded while converting query");
+				throw new QueryError("Unknown query type was proveded while converting query");
 
 			}
 

@@ -7,6 +7,7 @@
 #include <concepts>
 #include <vector>
 #include <set>
+#include <exception>
 
 
 namespace db {
@@ -22,29 +23,30 @@ namespace db {
 		};
 		bool is_columntype_value_correct(ColumnType v);
 
-		class ColumnTypeError {
+		class ColumnTypeError : std::exception {
 
 			std::string message;
 		public:
 			ColumnTypeError(std::string m) : message(m) {};
 
-			virtual std::string what() const throw()
+			virtual const char* what() const throw()
 			{
-				return message;
+				return message.c_str();
 			}
 
 		};
 
-		class ValueError {
+		class ValueError : std::exception {
 
 			std::string message;
 		public:
 			ValueError(std::string m) : message(m) {};
 
-			virtual std::string what() const throw()
+			virtual const char* what() const throw()
 			{
-				return message;
+				return message.c_str();
 			}
+
 
 		};
 
@@ -61,7 +63,7 @@ namespace db {
 			}
 			catch (...) {
 
-				throw ValueError("Wrong value was provided to serialization");
+				throw new ValueError("Wrong value was provided to serialization");
 
 			}
 
@@ -72,16 +74,16 @@ namespace db {
 	} // end datatypes
 
 
-	class ColumnNameError {
+	class ColumnNameError : std::exception {
 
 		std::string message;
 	public:
 		ColumnNameError(std::string colname)
 			: message("Do not find column " + colname + " in table") {};
 
-		virtual std::string what() const throw()
+		virtual const char* what() const throw()
 		{
-			return message;
+			return message.c_str();
 		}
 
 	};
@@ -228,7 +230,7 @@ namespace db {
 			case datatypes::ColumnType::FLOAT:
 				return datatypes::deserialize_d(value);
 			default:
-				throw datatypes::ColumnTypeError("Wrong type was in column while trying get attibute");
+				throw new datatypes::ColumnTypeError("Wrong type was in column while trying get attibute");
 			}
 
 		}

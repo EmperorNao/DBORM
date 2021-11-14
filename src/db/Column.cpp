@@ -28,7 +28,7 @@ namespace db {
 			if (is_columntype_value_correct(desc.type)) {
 				return new Column(desc);
 			}
-			throw ColumnTypeError("Not existing columns type was provided while trying create column");
+			throw new ColumnTypeError("Not existing columns type was provided while trying create column");
 
 		}
 
@@ -43,9 +43,6 @@ namespace db {
 			return std::stoi(v);
 
 		}
-
-
-
 
 	} // end datatypes
 
@@ -82,26 +79,5 @@ namespace db {
 		return container;
 
 	}
-
-	/*
-	Column* Table::operator[](std::string name) {
-
-		// TODO call
-		return this->container[name];
-
-	}
-	*/
-	/*
-	void Table::create_info_from_meta() {
-
-		std::cout << Table::table_name << std::endl;
-		for (auto& item : Table::meta)
-		{
-			std::cout << item.first << " : " << item.second.name << std::endl; //Вывод ключей и значений
-		}
-
-
-	}
-	*/
 
 } // end db

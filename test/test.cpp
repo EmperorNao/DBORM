@@ -5,7 +5,8 @@
 #include "db_test/Statement_test.h"
 #include "sql_test/Query_test.h"
 #include "sql_test/QueryBuilder_test.h"
-
+#include "sql_test/Result_test.h"
+#include "sql_test/PsqlEngine_test.h"
 
 static void
 exit_nicely(PGconn* conn)
@@ -15,13 +16,27 @@ exit_nicely(PGconn* conn)
 }
 
 
-const int DEBUG = 0;
+const int DEBUG = 1;
 
 
 int main(int argc, char* argv[]) {
 
 
 	if (DEBUG == 1) {
+
+        using namespace sql::psql;
+
+        PsqlEngine e("postgres", "postgres", "password");
+        sql::Session s(&e);
+        try {
+            PsqlResult* res = (PsqlResult*)s.select("posgtres", {}, COLUMNS(*))->execute();
+            res->out();
+        }
+        catch (std::exception* e) {
+
+            std::cout << "Exception goes\n" << e->what();
+
+        }
 
         const char* conninfo;
         PGconn* conn;
@@ -38,7 +53,7 @@ int main(int argc, char* argv[]) {
         if (argc > 1)
             conninfo = argv[1];
         else
-            conninfo = "dbname = postgres";
+            conninfo = "dbname = postgres user = postgres password = password";
 
         /* Make a connection to the database */
         conn = PQconnectdb(conninfo);

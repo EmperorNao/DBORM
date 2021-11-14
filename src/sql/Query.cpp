@@ -16,7 +16,7 @@ std::string sql::str_query(QueryType type) {
 	case WHERE:
 		return "WHERE";
 	default:
-		throw QueryError("Wrong qury type was provided to str_query");
+		throw new QueryError("Wrong qury type was provided to str_query");
 
 	}
 

@@ -11,9 +11,9 @@ TEST(QueryBuilderTest, Select) {
 	sql::QueryBuilder qb;
 	using test::TestU;
 	sql::Engine* e = new test::TestEngine();
-	sql::Session* s = sql::create_session(e);
+	sql::Session s(e);
 
-	std::string res = qb.build(s->select(TBL(TestU), COLUMNS(id, name))->get_cur_query());
+	std::string res = qb.build(s.select(TBL(TestU), COLUMNS(id, name))->get_cur_query());
 	ASSERT_EQ(res, "SELECT TestU.id, TestU.name FROM TestU");
 
 }
@@ -25,10 +25,10 @@ TEST(QueryBuilderTest, Join) {
 	using test::TestU;
 	using test::TestUVisit;
 	sql::Engine* e = new test::TestEngine();
-	sql::Session* s = sql::create_session(e);
+	sql::Session s(e);
 
 	std::string res = qb.build(
-		s->
+		s.
 		select(TBL(TestU), COLUMNS(name))->
 		join(TBL(TestU), TBL(TestUVisit), COLUMNS(user_id))->
 		get_cur_query());
@@ -42,10 +42,10 @@ TEST(QueryBuilderTest, WhereSelect) {
 	sql::QueryBuilder qb;
 	using namespace test;
 	sql::Engine* e = new test::TestEngine();
-	sql::Session* s = sql::create_session(e);
+	sql::Session s(e);
 
 	std::string res = qb.build(
-		s->
+		s.
 		select(TBL(TestU), COLUMNS(name))->
 		where(STATEMENT(TestU, id, <, 35))->
 		get_cur_query()
@@ -60,10 +60,10 @@ TEST(QueryBuilderTest, WhereJoin) {
 	sql::QueryBuilder qb;
 	using namespace test;
 	sql::Engine* e = new test::TestEngine();
-	sql::Session* s = sql::create_session(e);
+	sql::Session s(e);
 
 	std::string res = qb.build(
-		s->
+		s.
 		select(TBL(TestU), COLUMNS(name))->
 		join(TBL(TestU), TBL(TestUVisit), COLUMNS(user_id))->
 		where(STATEMENT(TestU, id, < , 35))->

@@ -9,10 +9,11 @@ namespace sql {
 
 	class QueryBuilder {
 
+	private:
+		std::string convert(std::vector<Query*> list);
 	public:
 		QueryBuilder() {};
 		std::string build(Query* q);
-		std::string convert(std::vector<Query*> list);
 
 	};
 

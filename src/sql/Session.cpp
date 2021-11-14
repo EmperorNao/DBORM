@@ -7,8 +7,6 @@
 
 namespace sql {
 
-	Session* create_session(Engine* e) { return new Session(e); }
-
 	sql::Session* sql::Session::update() { return this; };
 	sql::Session* sql::Session::del() { return this; };
 
@@ -32,25 +30,25 @@ namespace sql {
 		QueryType cur = this->current->get_protocol();
 		if (cur != SELECT and cur != JOIN) {
 
-			throw QueryError("Can't join if last query was not select or join");
+			throw new QueryError("Can't join if last query was not select or join");
 
 		}
 
 		if (col.size() > 1) {
 
-			throw QueryError("Can't join on more then one column in one join");
+			throw new QueryError("Can't join on more then one column in one join");
 
 		}
 
 		std::string column = col[0];
 		if (add_meta.find(column) == add_meta.end()) {
 
-			throw QueryError("Don't find column " + column + " to join");
+			throw new QueryError("Don't find column " + column + " to join");
 
 		}
 		if (not add_meta[column].fk) {
 
-			throw QueryError("Column " + column + " needed to be foreign key for join, but it's not");
+			throw new QueryError("Column " + column + " needed to be foreign key for join, but it's not");
 
 		}
 
@@ -68,7 +66,7 @@ namespace sql {
 
 		if (main_column == "") {
 
-			throw QueryError("Don't find primary key to join in table");
+			throw new QueryError("Don't find primary key to join in table");
 
 		}
 
@@ -82,7 +80,7 @@ namespace sql {
 		QueryType cur = this->current->get_protocol();
 		if (cur != SELECT and cur != JOIN) {
 
-			throw QueryError("Can't use where if last query was not select or join");
+			throw new QueryError("Can't use where if last query was not select or join");
 
 		}
 		this->current = new Where(st, this->current);
@@ -91,21 +89,27 @@ namespace sql {
 	
 	};
 
-	sql::Session* sql::Session::execute() { 
+	Result* sql::Session::execute() { 
 	
+		if (autotransaction) {
+
+			begin();
+
+		}
 		try {
+			Result* res = engine->execute(this->current);
+			this->results.push_back(res);
+			this->current = nullptr;
+			if (autotransaction) {
 
-			this->engine->execute(this->current);
+				end();
 
+			}
+			return res;
 		}
-		catch (QueryError& qe) {
-
-			throw qe;
-
+		catch (std::exception* e) {
+			throw e;
 		}
-
-		this->current = nullptr;
-		return this;  
 	
 	};
 
