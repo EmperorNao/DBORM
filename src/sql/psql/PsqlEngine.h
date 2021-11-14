@@ -171,8 +171,9 @@ namespace sql {
 
 				connection = PQconnectdb(conninfo.c_str());
 				if (PQstatus(connection) != CONNECTION_OK) {
-					throw new EngineError("Error during trying to create connection: ");
+					std::string err = connection_err();
 					exit_nicely();
+					throw new EngineError("Error during trying to create connection: " + err);
 				}
 			
 			}
@@ -181,9 +182,10 @@ namespace sql {
 
 				PGresult* res = PQexec(connection, "BEGIN");
 				if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-					throw new EngineError("Error during trying to begin: " + connection_err());
+					std::string err = connection_err();
 					PQclear(res);
 					exit_nicely();
+					throw new EngineError("Error during trying to begin: " + err);
 				}
 
 			}
@@ -192,9 +194,10 @@ namespace sql {
 
 				PGresult* res = PQexec(connection, "END");
 				if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-					throw new EngineError("Error during trying to end: " + connection_err());
+					std::string err = connection_err();
 					PQclear(res);
 					exit_nicely();
+					throw new EngineError("Error during trying to end: " + err);
 				}
 
 			}
@@ -203,9 +206,10 @@ namespace sql {
 
 				PGresult* res = PQexec(connection, "COMMIT");
 				if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-					throw new EngineError("Error during trying to commit: " + connection_err());
+					std::string err = connection_err();
 					PQclear(res);
 					exit_nicely();
+					throw new EngineError("Error during trying to commit: " + err);
 				}
 
 			}
@@ -214,9 +218,10 @@ namespace sql {
 
 				PGresult* res = PQexec(connection, "ROLLBACK");
 				if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-					throw new EngineError("Error during trying to rollback: " + connection_err());
+					std::string err = connection_err();
 					PQclear(res);
 					exit_nicely();
+					throw new EngineError("Error during trying to rollback: " + err);
 				}
 
 			}
@@ -226,8 +231,10 @@ namespace sql {
 				std::string translated_query = qb.build(q);
 				PGresult* res = PQexec(connection, translated_query.c_str());
 				if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+					std::string err = connection_err();
 					PQclear(res);
-					throw new EngineError("Error during trying to execute query: ");
+					exit_nicely();
+					throw new EngineError("Error during trying to execute query: " + err);
 				}
 				return new PsqlResult(res);
 

@@ -19,7 +19,7 @@ namespace sql {
 	};
 
 
-	class EngineError : std::exception {
+	class EngineError : public std::exception {
 
 		std::string message;
 	public:
