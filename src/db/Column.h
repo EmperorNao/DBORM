@@ -219,6 +219,7 @@ namespace db {
 
 		}
 
+
 		template <datatypes::convertable_to_str T>
 		T get() const {
 

@@ -4,7 +4,7 @@ std::string sql::str_query(QueryType type) {
 
 	switch (type) {
 	case INSERT:
-		return "INSERT INTO";
+		return "INSERT INTO ";
 	case DELETE:
 		return "DELETE FROM";
 	case SELECT:

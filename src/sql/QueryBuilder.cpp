@@ -31,6 +31,7 @@ namespace sql {
 		Join* join;
 		Where* where;
 		Select* select;
+		Insert* insert;
 
 		QueryType start;
 		QueryType cur = q->get_protocol();
@@ -73,8 +74,64 @@ namespace sql {
 			}
 			else if (cur == INSERT) {
 
-				 // pass
+				insert = (Insert*)q;
+				query += insert->get_table() + " ";
+				std::vector<std::string> columns;
+				for (auto el : insert->get_meta()) {
 
+					columns.push_back(el.first);
+
+				}
+
+				query += "(";
+				for (int i = 0; i < columns.size() - 1; ++i) {
+
+					query += columns[i] + ", ";
+
+				}
+				if (columns.size()) {
+
+					query += columns[columns.size() - 1];
+
+				}
+				query += ") ";
+				query += "VALUES ";
+
+				auto values = insert->get_values();
+
+				for (int val = 0; val < values.size() - 1; ++val) {
+
+					query += "(";
+					for (int col = 0; col < columns.size() - 1; ++col) {
+
+						query += values[val]->get(columns[col]) + ", ";
+
+					}
+					if (columns.size()) {
+
+						query += values[val]->get(columns[columns.size() - 1]);
+
+					}
+					query += "), ";
+
+				}
+				if (values.size()) {
+
+					query += "(";
+					for (int col = 0; col < columns.size() - 1; ++col) {
+
+						query += values[values.size() - 1]->get(columns[col]) + ", ";
+
+					}
+					if (columns.size()) {
+
+						query += values[values.size() - 1]->get(columns[columns.size() - 1]);
+
+					}
+					query += ")";
+
+				}
+				return query;
 
 			}
 			else {

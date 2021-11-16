@@ -140,7 +140,7 @@ namespace db {
 			
 		}
 
-		std::string get(std::string name) {
+		std::string get(std::string name, bool str = false) {
 
 			return this->container[name]->get_string();
 

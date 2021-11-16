@@ -67,12 +67,33 @@ TEST(PsqlEngineTest, CommitTest) {
 }
 
 
-
 TEST(PsqlEngineTest, MigrationTest) {
 
 	using namespace sql::psql;
 	PsqlEngine e("ormtest", "postgres", "password");
 	sql::Session s(&e);
 	s.migrate("P:\\D\\Programming\\DBORM\\migration_test", "test", sql::MigrationFormat::DBORM);
+
+}
+
+
+TEST(PsqlEngineTest, InsertTest) {
+
+	using namespace sql::psql;
+	using namespace test;
+	PsqlEngine e("ormtest", "postgres", "password");
+	sql::Session s(&e);
+
+	test::TestU u1;
+	SET(u1, name, "FirstTestUser");
+	SET(u1, id, 0);
+	try {
+		s.insert(TBL(TestU), &u1)->execute();
+	}
+	catch (std::exception* e) {
+
+		std::cout << e->what();
+
+	}
 
 }

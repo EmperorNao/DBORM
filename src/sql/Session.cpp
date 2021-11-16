@@ -26,7 +26,6 @@ namespace sql {
 
 	};
 
-
 	sql::Session* sql::Session::join(std::string main_table, db::meta_info main_meta, std::string additional_table, db::meta_info add_meta, std::vector<std::string> col) {
 
 		QueryType cur = this->current->get_protocol();
@@ -90,6 +89,18 @@ namespace sql {
 	
 	
 	};
+
+	Session* sql::Session::insert(std::string table_name, db::meta_info meta, std::vector<db::Table*> values) {
+
+		if (this->current != nullptr) {
+
+			throw new QueryError("Insert in wrong position in query");
+
+		}
+		this->current = new Insert(table_name, meta, values);
+		return this;
+
+	}
 
 	void sql::Session::migrate(std::string path_to_save, std::string migration_name, MigrationFormat format) {
 

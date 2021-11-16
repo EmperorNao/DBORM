@@ -92,17 +92,19 @@ namespace sql {
 
 	};
 
-	/*class Insert : public Query {
+	class Insert : public Query {
 
 	private:
 		std::string table_name;
+		db::meta_info meta;
 		std::vector<db::Table*> values;
 	public:
-		Insert(std::string _table, std::vector<db::Table*> _values = {}, Query* q = nullptr)
-			: table_name(_table), values(_values), Query(INSERT, q) {};
+		Insert(std::string _table, db::meta_info _meta, std::vector<db::Table*> _values = {}, Query* q = nullptr)
+			: table_name(_table), meta(_meta), values(_values), Query(INSERT, q) {};
 		std::vector<db::Table*> get_values() const { return values; };
+		db::meta_info get_meta() const { return meta; };
 		std::string get_table() const { return table_name; }
 
-	};*/
+	};
 
 }
