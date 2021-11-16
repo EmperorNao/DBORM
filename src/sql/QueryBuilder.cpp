@@ -32,6 +32,7 @@ namespace sql {
 		Where* where;
 		Select* select;
 		Insert* insert;
+		Delete* del;
 
 		QueryType start;
 		QueryType cur = q->get_protocol();
@@ -129,6 +130,31 @@ namespace sql {
 
 					}
 					query += ")";
+
+				}
+				return query;
+
+			}
+			else if (cur == DELETE) {
+
+				del = (Delete*)q;
+				query += del->get_table();
+				auto values = del->get_values();
+
+				if (values.size()) {
+
+					std::string pk = values[0]->get_pk_key(del->get_table(), del->get_meta());
+
+					query += " WHERE " + pk + " IN (";
+					for (int i = 0; i < values.size() - 1; ++i) {
+
+						query += values[i]->get(pk) + ", ";
+
+					}
+					query += values[values.size() - 1]->get(pk);
+					query += ")";
+					return query;
+
 
 				}
 				return query;

@@ -236,7 +236,7 @@ namespace sql {
 
 				std::string translated_query = qb.build(q);
 				PGresult* res = PQexec(connection, translated_query.c_str());
-				if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+				if ((PQresultStatus(res) != PGRES_TUPLES_OK) and (PQresultStatus(res) != PGRES_COMMAND_OK)) {
 					std::string err = connection_err();
 					PQclear(res);
 					exit_nicely();
@@ -250,7 +250,7 @@ namespace sql {
 			Result* execute(std::string q) {
 
 				PGresult* res = PQexec(connection, q.c_str());
-				if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+				if ((PQresultStatus(res) != PGRES_TUPLES_OK) and (PQresultStatus(res) != PGRES_COMMAND_OK)) {
 					std::string err = connection_err();
 					PQclear(res);
 					exit_nicely();

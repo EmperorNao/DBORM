@@ -107,4 +107,22 @@ namespace sql {
 
 	};
 
+
+	class Delete : public Query {
+
+	private:
+		std::string table_name;
+		db::meta_info meta;
+		std::vector<db::Table*> values;
+
+	public:
+		Delete(std::string _table, db::meta_info _meta, std::vector<db::Table*> _values = {}, Query* q = nullptr)
+			: table_name(_table), meta(_meta), values(_values), Query(DELETE, q) {};
+		std::vector<db::Table*> get_values() const { return values; };
+		db::meta_info get_meta() const { return meta; };
+		std::string get_table() const { return table_name; }
+
+	};
+
+
 }

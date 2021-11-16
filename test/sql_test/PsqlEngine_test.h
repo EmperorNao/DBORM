@@ -77,7 +77,7 @@ TEST(PsqlEngineTest, MigrationTest) {
 }
 
 
-TEST(PsqlEngineTest, InsertTest) {
+TEST(PsqlEngineTest, InsertDeleteTest) {
 
 	using namespace sql::psql;
 	using namespace test;
@@ -87,8 +87,33 @@ TEST(PsqlEngineTest, InsertTest) {
 	test::TestU u1;
 	SET(u1, name, "FirstTestUser");
 	SET(u1, id, 0);
+	sql::Result* res;
+
 	try {
+
+		std::cout << "Table before delete" << std::endl;
+		res = s.select(TBL(TestU), COLUMNS(*))->execute();
+		res->out();
+
+		s.del(TBL(TestU), &u1)->execute();
+
+		std::cout << "Table after delete" << std::endl;
+		res = s.select(TBL(TestU), COLUMNS(*))->execute();
+		res->out();
+
+		int start_nrows = res->get_nrows();
+
 		s.insert(TBL(TestU), &u1)->execute();
+
+		std::cout << "Table after insert" << std::endl;
+		res = s.select(TBL(TestU), COLUMNS(*))->execute();
+		res->out();
+		int after_nrows = res->get_nrows();
+
+		s.del(TBL(TestU), &u1)->execute();
+
+		EXPECT_EQ(start_nrows, after_nrows - 1);
+
 	}
 	catch (std::exception* e) {
 

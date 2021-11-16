@@ -6,7 +6,7 @@ std::string sql::str_query(QueryType type) {
 	case INSERT:
 		return "INSERT INTO ";
 	case DELETE:
-		return "DELETE FROM";
+		return "DELETE FROM ";
 	case SELECT:
 		return "SELECT";
 	case UPDATE:

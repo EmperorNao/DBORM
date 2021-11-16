@@ -102,6 +102,19 @@ namespace sql {
 
 	}
 
+	Session* sql::Session::del(std::string table_name, db::meta_info meta, std::vector<db::Table*> values) {
+
+		if (this->current != nullptr) {
+
+			throw new QueryError("Delete in wrong position in query");
+
+		}
+		this->current = new Delete(table_name, meta, values);
+		return this;
+
+	}
+
+
 	void sql::Session::migrate(std::string path_to_save, std::string migration_name, MigrationFormat format) {
 
 		Result* r = engine->execute("SELECT * from information_schema.tables where table_schema not in ('information_schema', 'pg_catalog')");
