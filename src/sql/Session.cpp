@@ -2,7 +2,9 @@
 #include <stdarg.h>
 #include <ranges>
 #include <set>
-
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 
 
 namespace sql {
@@ -89,9 +91,116 @@ namespace sql {
 	
 	};
 
-	void sql::Session::migrate(std::string filename, MigrationFormat format) {
+	void sql::Session::migrate(std::string path_to_save, std::string migration_name, MigrationFormat format) {
 
-		engine->migrate(filename, format);
+		Result* r = engine->execute("SELECT * from information_schema.tables where table_schema not in ('information_schema', 'pg_catalog')");
+		std::vector<std::string> tables(r->get_nrows());
+		for (int row = 0; row < r->get_nrows(); ++row) {
+
+			tables[row] = r->get_value(row, "table_name");
+
+		}
+		r->free();
+
+		std::vector<Result*> inside_data;
+
+		try {
+
+			for (auto table : tables) {
+
+				Result* res = engine->execute("SELECT * from " + table);
+				inside_data.push_back(res);
+
+			}
+
+		}
+		catch (std::exception* e) {
+
+			for (int i = 0; i < inside_data.size(); ++i) {
+
+				inside_data[i]->free();
+
+			}
+			throw e;
+
+		}
+
+		try {
+
+			if (format == DBORM) {
+
+				std::filesystem::path dir(path_to_save);
+				std::filesystem::path filename(migration_name);
+				std::filesystem::path full_path = dir / filename;
+				std::ofstream file;
+				file.open(full_path.c_str(), std::ios::out);
+				int size = tables.size();
+
+				file << migration_name << std::endl << std::to_string(size) << std::endl;
+				for (int i = 0; i < size; ++i) {
+
+					file << tables[i] << std::endl;
+
+				}
+				file.close();
+
+				for (int k = 0; k < size; ++k) {
+
+					file.open(dir / std::filesystem::path(migration_name + "_" + tables[k]));
+					int rows = inside_data[k]->get_nrows();
+					int cols = inside_data[k]->get_ncols();
+					std::vector<std::string> columns = inside_data[k]->get_columns();
+
+					for (int j = 0; j < cols; ++j) {
+
+						file << "\"" << columns[j] << "\"" << " ";
+
+					}
+					for (int i = 0; i < rows; ++i) {
+
+						for (int j = 0; j < cols; ++j) {
+
+							file << "\"" << inside_data[k]->get_value(i, j) << "\"" << " ";
+
+						}
+						file << std::endl;
+
+					}
+					file.close();
+
+				}
+
+			}
+			else if (format == CSV) {
+
+
+
+			}
+			else if (format == JSON) {
+
+				// TODO
+
+			}
+
+			for (int i = 0; i < inside_data.size(); ++i) {
+
+				inside_data[i]->free();
+
+			}
+			return;
+
+		} // try end
+		catch (std::exception* e) {
+
+			for (int i = 0; i < inside_data.size(); ++i) {
+
+				inside_data[i]->free();
+
+			}
+
+		}
+		throw new MigrationError("Don't find right example");
+		return;
 
 	}
 

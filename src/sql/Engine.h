@@ -1,7 +1,28 @@
 #pragma once
 #include "Query.h"
 
+
 namespace sql {
+
+
+	enum MigrationFormat {
+		DBORM, CSV, JSON
+	};
+
+
+	class MigrationError : public std::exception {
+
+		std::string message;
+	public:
+		MigrationError(std::string m) : message(m) {};
+
+		virtual const char* what() const throw()
+		{
+			return message.c_str();
+		}
+
+	};
+
 
 	typedef long long ll;
 
@@ -51,6 +72,7 @@ namespace sql {
 		std::vector<std::string> get_columns() { return columns; }
 		ll get_ncols() { return cols; }
 		ll get_nrows() { return rows; }
+		
 		virtual std::string get_value(ll row, ll col) = 0;
 		virtual std::string get_value(ll row, std::string col) = 0;
 		virtual void free() = 0;
@@ -78,7 +100,6 @@ namespace sql {
 		{};
 		virtual Result* execute(Query* q) = 0;
 		virtual Result* execute(std::string) = 0;
-		virtual void migrate(std::string filename, MigrationFormat format) = 0;
 		virtual void begin() = 0;
 		virtual void end() = 0;
 		virtual void rollback() = 0;

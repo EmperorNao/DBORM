@@ -2,6 +2,7 @@
 #include "../src/sql/Session.h"
 #include "../src/sql/Engine.h"
 
+
 namespace test {
 
 	class TestResult : public sql::Result {
@@ -73,7 +74,6 @@ namespace test {
 		void end() {};
 		void commit() {};
 		void rollback() {};
-		void migrate(std::string, sql::MigrationFormat) {};
 
 	};
 

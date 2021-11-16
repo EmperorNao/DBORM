@@ -4,7 +4,6 @@
 #include <initializer_list>
 #include "QueryBuilder.h"
 #include "Engine.h"
-#include "Migrator.h"
 
 
 namespace sql {
@@ -35,7 +34,8 @@ namespace sql {
 		
 		}
 
-		void migrate(std::string file_name, MigrationFormat format);
+		void migrate(std::string path_to_save, std::string file_name, MigrationFormat format);
+
 
 		////void add_info(std::string table, std::map<std::string, db::ColumnDescription> meta);
 		//Session* update(std::string table_name, db::meta_info meta, db::Table* t);

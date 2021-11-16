@@ -73,6 +73,6 @@ TEST(PsqlEngineTest, MigrationTest) {
 	using namespace sql::psql;
 	PsqlEngine e("ormtest", "postgres", "password");
 	sql::Session s(&e);
-	s.migrate();
+	s.migrate("P:\\D\\Programming\\DBORM\\migration_test", "test", sql::MigrationFormat::DBORM);
 
 }
