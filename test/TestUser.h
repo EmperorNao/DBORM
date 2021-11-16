@@ -49,7 +49,7 @@ namespace test {
 				COL(id, db::datatypes::INTEGER)
 				COL(name, db::datatypes::STRING)
 				PRIMARY_KEY(id)
-				END_DECL(TestU)
+			END_DECL(TestU)
 		}
 
 	};
@@ -70,7 +70,7 @@ namespace test {
 				COL(money_paid, db::datatypes::FLOAT)
 				PRIMARY_KEY(id)
 				FOREIGN_KEY(user_id, TestU, id)
-				END_DECL(TestUVisit)
+			END_DECL(TestUVisit)
 
 		}
 

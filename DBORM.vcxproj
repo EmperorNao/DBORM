@@ -44,6 +44,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\sql\Migrator.h" />
     <ClInclude Include="src\sql\Engine.h" />
     <ClInclude Include="src\sql\psql\PsqlEngine.h" />
     <ClInclude Include="src\db\Column.h" />
@@ -64,6 +65,7 @@
     <ClInclude Include="test\User.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\sql\Migrator.cpp" />
     <ClCompile Include="src\sql\Engine.cpp" />
     <ClCompile Include="src\sql\psql\PsqlEngine.cpp" />
     <ClCompile Include="src\db\Column.cpp" />

@@ -89,7 +89,7 @@ namespace sql {
 	
 	};
 
-	void sql::Session::migrate(std::string filename, std::string format) {
+	void sql::Session::migrate(std::string filename, MigrationFormat format) {
 
 		engine->migrate(filename, format);
 

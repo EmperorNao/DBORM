@@ -78,7 +78,7 @@ namespace sql {
 		{};
 		virtual Result* execute(Query* q) = 0;
 		virtual Result* execute(std::string) = 0;
-		virtual void migrate(std::string filename, std::string format) = 0;
+		virtual void migrate(std::string filename, MigrationFormat format) = 0;
 		virtual void begin() = 0;
 		virtual void end() = 0;
 		virtual void rollback() = 0;

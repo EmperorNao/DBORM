@@ -73,7 +73,7 @@ namespace test {
 		void end() {};
 		void commit() {};
 		void rollback() {};
-		void migrate() {};
+		void migrate(std::string, sql::MigrationFormat) {};
 
 	};
 
