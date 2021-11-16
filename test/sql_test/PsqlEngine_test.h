@@ -55,11 +55,6 @@ TEST(PsqlEngineTest, SelectJoinTest) {
 }
 
 
-
-
-
-
-
 TEST(PsqlEngineTest, BeginTest) {
 
 	using namespace sql::psql;

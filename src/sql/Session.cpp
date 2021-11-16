@@ -87,7 +87,6 @@ namespace sql {
 		this->current = new Where(st, this->current);
 		return this;  
 	
-	
 	};
 
 	Session* sql::Session::insert(std::string table_name, db::meta_info meta, std::vector<db::Table*> values) {
@@ -118,7 +117,7 @@ namespace sql {
 
 		if (this->current != nullptr) {
 
-			throw new QueryError("Delete in wrong position in query");
+			throw new QueryError("Update in wrong position in query");
 
 		}
 		this->current = new Update(table_name, meta, value);

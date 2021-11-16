@@ -37,8 +37,8 @@ namespace sql {
 
 		QueryType start;
 		QueryType cur = q->get_protocol();
-		int nextind = 0;
-		if (cur != SELECT and cur != INSERT and cur != DELETE) {
+		int nextind = -1;
+		if (cur != SELECT and cur != INSERT and cur != DELETE and cur != UPDATE) {
 
 			throw new QueryError("Wrong type of query was first");
 
@@ -53,6 +53,8 @@ namespace sql {
 				std::string start_table = select->get_table();
 				do {
 
+					nextind += 1;
+					q = list[nextind];
 					select = (Select*)q;
 					auto columns = select->get_columns();
 					std::string table_name = select->get_table();
@@ -82,10 +84,7 @@ namespace sql {
 
 					}
 
-					q = q->get_parent();
-					nextind += 1;
-
-				} while ((q != nullptr) and (q->get_protocol() == SELECT));
+				} while ((nextind + 1 < list.size()) and (list[nextind + 1]->get_protocol() == SELECT));
 				query += " FROM " + start_table;
 
 			}
@@ -180,7 +179,7 @@ namespace sql {
 
 				update = (Update*)q;
 				db::Table* value = update->get_value();
-				std::string pk = value->get_pk_key(update->get_table(), del->get_meta());
+				std::string pk = value->get_pk_key(update->get_table(), update->get_meta());
 
 				query += update->get_table() + " ";
 
@@ -193,33 +192,50 @@ namespace sql {
 
 				}
 
-				query += " SET (";
-				for (int i = 0; i < columns.size() - 1; ++i) {
+				query += " SET ";
+				if (columns.size() > 1) {
+					query += "(";
+					for (int i = 0; i < columns.size() - 1; ++i) {
 
-					query += columns[i] + ", ";
+						query += columns[i] + ", ";
+
+					}
+					if (columns.size()) {
+
+						query += columns[columns.size() - 1];
+
+					}
+					query += ") ";
+				}
+				else {
+
+					query += columns[0];
 
 				}
-				if (columns.size()) {
-
-					query += columns[columns.size() - 1];
-
-				}
-				query += ") ";
 				query += " = ";
 
 
-				query += "(";
-				for (int col = 0; col < columns.size() - 1; ++col) {
+				if (columns.size() > 1) {
+					query += "(";
+					for (int col = 0; col < columns.size() - 1; ++col) {
 
-					query += value->get(columns[col], false) + ", ";
+						query += value->get(columns[col], false) + ", ";
+
+					}
+					if (columns.size()) {
+
+						query += value->get(columns[columns.size() - 1], false);
+
+					}
+					query += ")";
+				}
+				else {
+
+					query += value->get(columns[0], false);
 
 				}
-				if (columns.size()) {
 
-					query += value->get(columns[columns.size() - 1], false);
-
-				}
-				query += ")";
+				query += " WHERE " + pk + " = " + value->get(pk, false);
 				
 				return query;
 
@@ -236,7 +252,7 @@ namespace sql {
 
 		QueryType last = start;
 
-		for (int i = nextind; i < list.size(); ++i) {
+		for (int i = nextind + 1; i < list.size(); ++i) {
 
 			q = list[i];
 			cur = q->get_protocol();
