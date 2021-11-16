@@ -8,6 +8,7 @@
 #include "sql_test/Result_test.h"
 #include "sql_test/PsqlEngine_test.h"
 
+
 static void
 exit_nicely(PGconn* conn)
 {
@@ -16,7 +17,7 @@ exit_nicely(PGconn* conn)
 }
 
 
-const int DEBUG = 1;
+const int DEBUG = 0;
 
 
 int main(int argc, char* argv[]) {

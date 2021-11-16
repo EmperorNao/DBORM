@@ -71,6 +71,12 @@ namespace sql {
 				query += " FROM " + table_name;
 
 			}
+			else if (cur == INSERT) {
+
+				 // pass
+
+
+			}
 			else {
 
 				// TODO insert and delete queries
@@ -93,11 +99,7 @@ namespace sql {
 			case DELETE:
 				throw new QueryError("Misplaced delete in query");
 			case SELECT:
-				if (last != SELECT) {
-
-					throw new QueryError("Misplaced select in query");
-
-				}
+				throw new QueryError("Can not do multi select now");
 			case JOIN:
 				if (start != SELECT and last != JOIN) {
 
@@ -124,9 +126,7 @@ namespace sql {
 				throw new QueryError("Unknown query type was proveded while converting query");
 
 			}
-
 			last = cur;
-
 
 		}
 

@@ -38,3 +38,15 @@ TEST(QueryTest, QueryWhere) {
 
 }
 
+
+TEST(QueryTest, TwoSelects) {
+
+	using test::TestU;
+	using test::TestUVisit;
+	sql::Engine* e = new test::TestEngine();
+	sql::Session s(e);
+	test::TestU u;
+	EXPECT_ANY_THROW(s.select(TBL(TestU), COLUMNS(name))->select(TBL(TestUVisit), COLUMNS(id))->execute());
+
+}
+

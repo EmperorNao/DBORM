@@ -13,7 +13,7 @@ namespace test {
 	public:
 		TestResult() {
 
-			std::cout << "Calling test constructor" << std::endl;
+			std::cout << "Calling test constructor\n\n";
 			was_free = false;
 
 		}
@@ -40,13 +40,13 @@ namespace test {
 
 			}
 			was_free = true;
-			std::cout << "Calling free to avoid memory leak" << std::endl;
+			std::cout << "Calling free to avoid memory leak\n\n";
 
 		}
 
 		~TestResult() {
 
-			std::cout << "Calling destructor to avoid memory leak" << std::endl;
+			std::cout << "Calling destructor to avoid memory leak\n\n";
 
 		};
 
@@ -64,10 +64,16 @@ namespace test {
 			return new TestResult();
 
 		}
+		sql::Result* execute(std::string q) {
+
+			return nullptr;
+
+		}
 		void begin() {};
 		void end() {};
 		void commit() {};
 		void rollback() {};
+		void migrate() {};
 
 	};
 

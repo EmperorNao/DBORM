@@ -6,7 +6,6 @@
 
 namespace sql {
 
-
 	class QueryBuilder {
 
 	private:

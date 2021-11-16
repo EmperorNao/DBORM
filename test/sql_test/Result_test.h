@@ -16,18 +16,6 @@ TEST(ResultTest, DesctructorCallTest) {
 }
 
 
-TEST(ResultTest, FewFreeExceptionTest) {
-
-	using namespace test;
-	TestEngine engine;
-	sql::Session s(&engine);
-	test::TestResult* res = (test::TestResult*)s.select(TBL(TestU), COLUMNS(id, name))->execute();
-	res->free();
-	EXPECT_THROW(res->free(), sql::ResultError);
-
-}
-
-
 TEST(ResultTest, FewResultsTest) {
 
 	using namespace test;

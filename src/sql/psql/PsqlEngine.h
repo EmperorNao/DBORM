@@ -28,7 +28,7 @@ namespace sql {
 
 				}
 				this->set_nrows(PQntuples(result));
-				this->set_ncols(PQnfields(res));
+				this->set_ncols(PQnfields(result));
 
 				std::vector<std::string> columns(this->get_ncols());
 				for (ll col = 0; col < columns.size(); ++col) {
@@ -40,7 +40,7 @@ namespace sql {
 				
 			};
 
-			std::string get_value(ll row, ll col) {
+			inline std::string get_value(ll row, ll col) {
 
 				if (is_null()) {
 
@@ -105,7 +105,7 @@ namespace sql {
 				for (int i = 0; i < get_nrows(); i++) {
 
 					for (int j = 0; j < get_ncols(); j++) {
-						printf("%-10s", get_value(i, j).c_str());
+						printf("%-15s", get_value(i, j).c_str());
 
 					}
 					printf("\n");
@@ -232,6 +232,14 @@ namespace sql {
 
 			}
 
+			void migrate(std::string filename, std::string format) {
+
+				Result* r = this->execute("SELECT * from information_schema.tables where table_schema not in ('information_schema', 'pg_catalog')");
+				r->out();
+				r->free();
+
+			}
+
 			Result* execute(Query* q) {
 
 				std::string translated_query = qb.build(q);
@@ -246,9 +254,26 @@ namespace sql {
 
 			};
 
+
+			Result* execute(std::string q) {
+
+				PGresult* res = PQexec(connection, q.c_str());
+				if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+					std::string err = connection_err();
+					PQclear(res);
+					exit_nicely();
+					throw new EngineError("Error during trying to execute query: " + err);
+				}
+				return new PsqlResult(res);
+
+			};
+
+
+
 		};
 
-	}
 
 
-}
+	} // psql end
+
+} // sql end

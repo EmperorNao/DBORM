@@ -6,6 +6,16 @@
 #include <gtest/gtest.h>
 
 
+
+TEST(PsqlEngineTest, ConnectionTest) {
+
+	using namespace sql::psql;
+	
+	EXPECT_THROW(PsqlEngine e("postgres", "randomname", "randompassword"), sql::EngineError*);
+
+}
+
+
 TEST(PsqlEngineTest, SelectTest) {
 
 	using namespace sql::psql;
@@ -13,7 +23,7 @@ TEST(PsqlEngineTest, SelectTest) {
 	PsqlEngine e("postgres", "postgres", "password");
 	sql::Session s(&e);
 	try {
-		PsqlResult* res = (PsqlResult*)s.select("posgtres", {}, COLUMNS(*))->execute();
+		PsqlResult* res = (PsqlResult*)s.select("pg_database", {}, COLUMNS(*))->execute();
 		res->out();
 	}
 	catch (std::exception* e) {
@@ -21,5 +31,48 @@ TEST(PsqlEngineTest, SelectTest) {
 		std::cout << "Exception goes\n" << e->what();
 
 	}
+
+}
+
+
+TEST(PsqlEngineTest, BeginTest) {
+
+	using namespace sql::psql;
+
+	PsqlEngine e("postgres", "postgres", "password");
+	e.begin();
+
+}
+
+
+TEST(PsqlEngineTest, EndTest) {
+
+	using namespace sql::psql;
+
+	PsqlEngine e("postgres", "postgres", "password");
+	e.begin();
+	e.end();
+
+}
+
+
+TEST(PsqlEngineTest, CommitTest) {
+
+	using namespace sql::psql;
+
+	PsqlEngine e("postgres", "postgres", "password");
+	e.begin();
+	e.commit();
+
+}
+
+
+
+TEST(PsqlEngineTest, MigrationTest) {
+
+	using namespace sql::psql;
+	PsqlEngine e("ormtest", "postgres", "password");
+	sql::Session s(&e);
+	s.migrate();
 
 }

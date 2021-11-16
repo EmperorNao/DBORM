@@ -92,4 +92,17 @@ namespace sql {
 
 	};
 
+	/*class Insert : public Query {
+
+	private:
+		std::string table_name;
+		std::vector<db::Table*> values;
+	public:
+		Insert(std::string _table, std::vector<db::Table*> _values = {}, Query* q = nullptr)
+			: table_name(_table), values(_values), Query(INSERT, q) {};
+		std::vector<db::Table*> get_values() const { return values; };
+		std::string get_table() const { return table_name; }
+
+	};*/
+
 }

@@ -30,7 +30,8 @@ namespace db {
 									if (! classname::exist) {	\
 										classname::exist = true;
 
-	#define END_DECL(classname) for (auto& item : classname::meta) { \
+	#define END_DECL(classname) this->get_pk_key(classname::table_name, classname::meta); \
+								for (auto& item : classname::meta) { \
 								this->container[item.first] = db::datatypes::create_column(item.second); \
 									} \
 								} \
@@ -53,6 +54,19 @@ namespace db {
 	#define LIKE(classname, colname, value) (constant_##classname[#colname].like(value))
 
 
+	class TableError : public std::exception {
+
+		std::string message;
+	public:
+		TableError(std::string m) : message(m) {};
+		virtual const char* what() const throw()
+		{
+			return message.c_str();
+		}
+
+
+	};
+
 
 	class Table {
 
@@ -73,6 +87,28 @@ namespace db {
 
 		
 		};
+
+		virtual std::string get_pk_key(std::string table_name, meta_info meta) {
+
+			std::vector<std::string> keys = {};
+			for (auto el : meta) {
+
+				if (el.second.pk) {
+
+					keys.push_back(el.first);
+
+				}
+
+			}
+			if (keys.size() != 1) {
+
+				throw TableError("Number of primary keys in table " + table_name + 
+					" is wrong : " + std::to_string(keys.size()));
+
+			}
+			return keys[0];
+
+		}
 
 		template <datatypes::convertable_to_str T>
 		void set(std::string name, T r_value) {

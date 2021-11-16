@@ -7,8 +7,8 @@
 
 namespace sql {
 
-	sql::Session* sql::Session::update() { return this; };
-	sql::Session* sql::Session::del() { return this; };
+	/*sql::Session* sql::Session::update() { return this; };
+	sql::Session* sql::Session::del() { return this; };*/
 
 	sql::Session* sql::Session::select(std::string table_name, db::meta_info meta, std::vector<std::string> cols = {}) {
 
@@ -88,6 +88,12 @@ namespace sql {
 	
 	
 	};
+
+	void sql::Session::migrate(std::string filename, std::string format) {
+
+		engine->migrate(filename, format);
+
+	}
 
 	Result* sql::Session::execute() { 
 	
