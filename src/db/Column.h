@@ -244,10 +244,9 @@ namespace db {
 
 		void set_string(std::string r_value) {
 
-			this->value = r_value;
+			this->value = "'" + r_value + "'";
 
 		}
-
 
 		// Generating statements
 		template <datatypes::convertable_to_str T>

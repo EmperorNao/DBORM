@@ -104,12 +104,12 @@ namespace sql {
 					query += "(";
 					for (int col = 0; col < columns.size() - 1; ++col) {
 
-						query += values[val]->get(columns[col]) + ", ";
+						query += values[val]->get(columns[col], false) + ", ";
 
 					}
 					if (columns.size()) {
 
-						query += values[val]->get(columns[columns.size() - 1]);
+						query += values[val]->get(columns[columns.size() - 1], false);
 
 					}
 					query += "), ";
@@ -120,12 +120,12 @@ namespace sql {
 					query += "(";
 					for (int col = 0; col < columns.size() - 1; ++col) {
 
-						query += values[values.size() - 1]->get(columns[col]) + ", ";
+						query += values[values.size() - 1]->get(columns[col], false) + ", ";
 
 					}
 					if (columns.size()) {
 
-						query += values[values.size() - 1]->get(columns[columns.size() - 1]);
+						query += values[values.size() - 1]->get(columns[columns.size() - 1], false);
 
 					}
 					query += ")";

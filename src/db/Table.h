@@ -140,9 +140,15 @@ namespace db {
 			
 		}
 
-		std::string get(std::string name, bool str = false) {
+		std::string get(std::string name, bool str = true) {
 
-			return this->container[name]->get_string();
+			std::string subs = this->container[name]->get_string();
+			if (str and (subs.size() > 2) and (subs[0] == '\'') and (subs[subs.size() - 1] == '\'')) {
+
+				return subs.substr(1, subs.size() - 2);
+
+			}
+			return subs;
 
 		}
 
