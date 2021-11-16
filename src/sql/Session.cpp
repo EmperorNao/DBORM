@@ -114,6 +114,20 @@ namespace sql {
 
 	}
 
+	Session* sql::Session::update(std::string table_name, db::meta_info meta, db::Table* value) {
+
+		if (this->current != nullptr) {
+
+			throw new QueryError("Delete in wrong position in query");
+
+		}
+		this->current = new Update(table_name, meta, value);
+		return this;
+
+
+	}
+
+
 
 	void sql::Session::migrate(std::string path_to_save, std::string migration_name, MigrationFormat format) {
 

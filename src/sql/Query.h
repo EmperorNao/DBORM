@@ -125,4 +125,20 @@ namespace sql {
 	};
 
 
+	class Update : public Query {
+
+	private:
+		std::string table_name;
+		db::meta_info meta;
+		db::Table* value;
+
+	public:
+		Update(std::string _table, db::meta_info _meta, db::Table* _value, Query* q = nullptr)
+			: table_name(_table), meta(_meta), value(_value), Query(DELETE, q) {};
+		db::Table* get_value() const { return value; };
+		db::meta_info get_meta() const { return meta; };
+		std::string get_table() const { return table_name; }
+
+	};
+
 }

@@ -1,7 +1,7 @@
 #include "QueryBuilder.h"
 
-namespace sql {
-	
+
+namespace sql {	
 	
 	std::string QueryBuilder::build(Query* q) {
 
@@ -33,9 +33,11 @@ namespace sql {
 		Select* select;
 		Insert* insert;
 		Delete* del;
+		Update* update;
 
 		QueryType start;
 		QueryType cur = q->get_protocol();
+		int nextind = 0;
 		if (cur != SELECT and cur != INSERT and cur != DELETE) {
 
 			throw new QueryError("Wrong type of query was first");
@@ -48,29 +50,43 @@ namespace sql {
 			if (cur == SELECT) {
 
 				select = (Select*)q;
-				auto columns = select->get_columns();
-				std::string table_name = select->get_table();
-				for (int i = 0; i < columns.size() - 1; ++i) {
+				std::string start_table = select->get_table();
+				do {
 
-					if (columns[i] != "*") {
-						query += " " + table_name + "." + columns[i] + ",";
+					select = (Select*)q;
+					auto columns = select->get_columns();
+					std::string table_name = select->get_table();
+					if (table_name != start_table) {
+
+						query += ", ";
+
 					}
-					else {
-						query += " " + columns[i] + ",";
+					for (int i = 0; i < columns.size() - 1; ++i) {
+
+						if (columns[i] != "*") {
+							query += " " + table_name + "." + columns[i] + ",";
+						}
+						else {
+							query += " " + columns[i] + ",";
+						}
+
+					}
+					if (columns.size()) {
+
+						if (columns[columns.size() - 1] != "*") {
+							query += " " + table_name + "." + columns[columns.size() - 1];
+						}
+						else {
+							query += " " + columns[columns.size() - 1];
+						}
+
 					}
 
-				}
-				if (columns.size()) {
+					q = q->get_parent();
+					nextind += 1;
 
-					if (columns[columns.size() - 1] != "*") {
-						query += " " + table_name + "." + columns[columns.size() - 1];
-					}
-					else {
-						query += " " + columns[columns.size() - 1];
-					}
-
-				}
-				query += " FROM " + table_name;
+				} while ((q != nullptr) and (q->get_protocol() == SELECT));
+				query += " FROM " + start_table;
 
 			}
 			else if (cur == INSERT) {
@@ -160,6 +176,54 @@ namespace sql {
 				return query;
 
 			}
+			else if (cur == UPDATE) {
+
+				update = (Update*)q;
+				db::Table* value = update->get_value();
+				std::string pk = value->get_pk_key(update->get_table(), del->get_meta());
+
+				query += update->get_table() + " ";
+
+				std::vector<std::string> columns;
+				for (auto el : update->get_meta()) {
+
+					if (el.first != pk) {
+						columns.push_back(el.first);
+					}
+
+				}
+
+				query += " SET (";
+				for (int i = 0; i < columns.size() - 1; ++i) {
+
+					query += columns[i] + ", ";
+
+				}
+				if (columns.size()) {
+
+					query += columns[columns.size() - 1];
+
+				}
+				query += ") ";
+				query += " = ";
+
+
+				query += "(";
+				for (int col = 0; col < columns.size() - 1; ++col) {
+
+					query += value->get(columns[col], false) + ", ";
+
+				}
+				if (columns.size()) {
+
+					query += value->get(columns[columns.size() - 1], false);
+
+				}
+				query += ")";
+				
+				return query;
+
+			}
 			else {
 
 				// TODO insert and delete queries
@@ -172,7 +236,7 @@ namespace sql {
 
 		QueryType last = start;
 
-		for (int i = 1; i < list.size(); ++i) {
+		for (int i = nextind; i < list.size(); ++i) {
 
 			q = list[i];
 			cur = q->get_protocol();
@@ -182,7 +246,9 @@ namespace sql {
 			case DELETE:
 				throw new QueryError("Misplaced delete in query");
 			case SELECT:
-				throw new QueryError("Can not do multi select now");
+				throw new QueryError("Misplaced select in query");
+			case UPDATE:
+				throw new QueryError("Misplaces update in query");
 			case JOIN:
 				if (start != SELECT and last != JOIN) {
 

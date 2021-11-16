@@ -10,7 +10,7 @@ std::string sql::str_query(QueryType type) {
 	case SELECT:
 		return "SELECT";
 	case UPDATE:
-		return "UPDATE";
+		return "UPDATE ";
 	case JOIN:
 		return "JOIN";
 	case WHERE:

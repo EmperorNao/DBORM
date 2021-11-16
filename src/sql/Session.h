@@ -40,7 +40,7 @@ namespace sql {
 		////void add_info(std::string table, std::map<std::string, db::ColumnDescription> meta);
 		//Session* update(std::string table_name, db::meta_info meta, db::Table* t);
 
-		//Session* update(std::string table_name, db::meta_info meta);
+		Session* update(std::string table_name, db::meta_info meta, db::Table* t);
 
 		Session* insert(std::string table_name, db::meta_info meta, std::vector<db::Table*> values);
 		Session* insert(std::string table_name, db::meta_info meta, db::Table* value) { return this->insert(table_name, meta, std::vector<db::Table*>({value}) ); };

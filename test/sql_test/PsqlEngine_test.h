@@ -35,6 +35,31 @@ TEST(PsqlEngineTest, SelectTest) {
 }
 
 
+TEST(PsqlEngineTest, SelectJoinTest) {
+
+	using namespace sql::psql;
+	using namespace test;
+
+	PsqlEngine e("postgres", "postgres", "password");
+	sql::Session s(&e);
+	try {
+		sql::Result* res = s.select(TBL(TestU), COLUMNS(name))->select(TBL(TestUVisit), COLUMNS(money_paid))->join(TBL(TestU), TBL(TestUVisit), COLUMNS(user_id))->execute();
+		res->out();
+	}
+	catch (std::exception* e) {
+
+		std::cout << "Exception goes\n" << e->what();
+
+	}
+
+}
+
+
+
+
+
+
+
 TEST(PsqlEngineTest, BeginTest) {
 
 	using namespace sql::psql;
@@ -122,3 +147,47 @@ TEST(PsqlEngineTest, InsertDeleteTest) {
 	}
 
 }
+
+
+TEST(PsqlEngineTest, UpdateTest) {
+
+	using namespace sql::psql;
+	using namespace test;
+	PsqlEngine e("ormtest", "postgres", "password");
+	sql::Session s(&e);
+
+	test::TestU u1;
+	SET(u1, name, "FirstTestUser");
+	SET(u1, id, 0);
+	sql::Result* res;
+
+	try {
+
+		std::cout << "Table before insert" << std::endl;
+		res = s.select(TBL(TestU), COLUMNS(*))->execute();
+		res->out();
+
+		s.insert(TBL(TestU), &u1)->execute();
+
+		std::cout << "Table after insert" << std::endl;
+		res = s.select(TBL(TestU), COLUMNS(*))->execute();
+		res->out();
+
+		SET(u1, name, "NEWSPECIALTESTNAME");
+		s.update(TBL(TestU), &u1)->execute();
+
+		std::cout << "Table after update" << std::endl;
+		res = s.select(TBL(TestU), COLUMNS(*))->execute();
+		res->out();
+
+		s.del(TBL(TestU), &u1)->execute();
+
+	}
+	catch (std::exception* e) {
+
+		std::cout << e->what();
+
+	}
+
+}
+
