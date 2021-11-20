@@ -6,6 +6,7 @@
 #include <chrono>
 #include "../test/TestUser.h"
 #include <random>
+#include <fstream>
 
 
 std::chrono::system_clock::time_point now() {
@@ -198,9 +199,12 @@ void copy_from_libpq(PGconn* conn) {
 }
 
 
-void do_benchmark(size_t nrows) {
+void do_benchmark(std::string filename, size_t nrows) {
 
+	
 	try {
+
+		std::fstream file(filename, std::fstream::in | std::fstream::out | std::fstream::app);
 		auto start = now();
 		auto end = now();
 		auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
@@ -210,13 +214,14 @@ void do_benchmark(size_t nrows) {
 		sql::psql::PsqlEngine e("ormtest", "postgres", "password");
 		sql::Session s(&e);
 
-
+		file << nrows << std::endl;
 		start = now();
 		fill_table_orm(nrows);
 		end = now();
 		double ormtime_insert = microseconds(start, end) / n_experiments / 1000000;
 		std::cout << "Average time for ORM inserting " << nrows << " nrows  is "
 			<< ormtime_insert << " s." << std::endl;
+		file << ormtime_insert << std::endl;
 
 
 		start = now();
@@ -229,6 +234,7 @@ void do_benchmark(size_t nrows) {
 		double ormtime_main = microseconds(start, end) / n_experiments / 1000000;
 		std::cout << "Average time for ORM extracting " << nrows << " nrows  is " 
 			<< ormtime_main << " s." << std::endl;
+		file << ormtime_main << std::endl;
 
 		clear_table_orm();
 
@@ -242,6 +248,7 @@ void do_benchmark(size_t nrows) {
 		double libpqtime_insert = microseconds(start, end) / n_experiments / 1000000;
 		std::cout << "Average time for LIBPQ inserting " << nrows << " nrows  is "
 			<< libpqtime_insert << " s." << std::endl;
+		file << libpqtime_insert << std::endl;
 
 
 		start = now();
@@ -254,6 +261,8 @@ void do_benchmark(size_t nrows) {
 		double libpqtime_main = microseconds(start, end) / n_experiments / 1000000;
 		std::cout << "Average time for LIBPQ extracting " << nrows << " nrows  is " 
 			<< libpqtime_main << " s." << std::endl;
+
+		file << libpqtime_main << std::endl;
 		clear_table_libpq();
 
 		std::cout << "ORM is slower then LIBPQ on inserting "

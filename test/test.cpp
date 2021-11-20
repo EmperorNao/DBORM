@@ -19,10 +19,10 @@ int main(int argc, char* argv[]) {
 
 	if (DEBUG == 1) {
 
-		for (int i = 1000; i < 1000000000; i*= 10) {
+		for (int i = 100000; i < 250001; i+= 25000) {
 
 			std::cout << "ELEMENTS: " << i << std::endl;
-			do_benchmark(i);
+			do_benchmark("plot.txt", i);
 			std::cout << std::endl;
 
 		}
