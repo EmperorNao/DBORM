@@ -1,23 +1,31 @@
-ELEMENTS: 10000
-Average time for ORM inserting 10000 nrows  is 0.0615639 s.
-Average time for ORM extracting 10000 nrows  is 0.0968441 s.
-Average time for LIBPQ inserting 10000 nrows  is 0.0383031 s.
-Average time for LIBPQ extracting 10000 nrows  is 0.014002 s.
-ORM is slower then LIBPQ on inserting 37.7832%
-ORM is slower then LIBPQ on extracting 85.5417%
-
 ELEMENTS: 100000
-Average time for ORM inserting 100000 nrows  is 0.3635 s.
-Average time for ORM extracting 100000 nrows  is 0.672269 s.
-Average time for LIBPQ inserting 100000 nrows  is 0.384958 s.
-Average time for LIBPQ extracting 100000 nrows  is 0.157827 s.
-ORM is slower then LIBPQ on inserting -5.90302%
-ORM is slower then LIBPQ on extracting 76.5232%
+Average time for ORM inserting 100000 nrows  is 0.745515 s.
+Average time for ORM extracting 100000 nrows  is 1.27186 s.
+Average time for LIBPQ inserting 100000 nrows  is 0.471305 s.
+Average time for LIBPQ extracting 100000 nrows  is 0.192625 s.
+ORM is slower then LIBPQ on inserting 36.7813%
+ORM is slower then LIBPQ on extracting 84.8549%
 
-ELEMENTS: 1000000
-Average time for ORM inserting 1000000 nrows  is 4.99304 s.
-Average time for ORM extracting 1000000 nrows  is 6.88528 s.
-Average time for LIBPQ inserting 1000000 nrows  is 6.02661 s.
-Average time for LIBPQ extracting 1000000 nrows  is 2.30737 s.
-ORM is slower then LIBPQ on inserting -20.7003%
-ORM is slower then LIBPQ on extracting 66.4884%
+ELEMENTS: 150000
+Average time for ORM inserting 150000 nrows  is 0.637433 s.
+Average time for ORM extracting 150000 nrows  is 1.2118 s.
+Average time for LIBPQ inserting 150000 nrows  is 0.726718 s.
+Average time for LIBPQ extracting 150000 nrows  is 0.271012 s.
+ORM is slower then LIBPQ on inserting -14.007%
+ORM is slower then LIBPQ on extracting 77.6357%
+
+ELEMENTS: 200000
+Average time for ORM inserting 200000 nrows  is 0.950763 s.
+Average time for ORM extracting 200000 nrows  is 1.7898 s.
+Average time for LIBPQ inserting 200000 nrows  is 0.868916 s.
+Average time for LIBPQ extracting 200000 nrows  is 0.380539 s.
+ORM is slower then LIBPQ on inserting 8.60857%
+ORM is slower then LIBPQ on extracting 78.7384%
+
+ELEMENTS: 250000
+Average time for ORM inserting 250000 nrows  is 1.16054 s.
+Average time for ORM extracting 250000 nrows  is 2.07901 s.
+Average time for LIBPQ inserting 250000 nrows  is 1.14221 s.
+Average time for LIBPQ extracting 250000 nrows  is 0.499177 s.
+ORM is slower then LIBPQ on inserting 1.57924%
+ORM is slower then LIBPQ on extracting 75.9897%
