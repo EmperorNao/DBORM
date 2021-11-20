@@ -52,7 +52,7 @@ void fill_table_orm(size_t nrows) {
 
 	for (size_t i = 0; i < nrows; ++i) {
 
-		free(users[i]);
+		delete users[i];
 
 	}
 

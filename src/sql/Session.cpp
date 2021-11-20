@@ -262,7 +262,9 @@ namespace sql {
 
 			std::string s;
 			file >> s;
-			while (file) {
+			file >> s;
+			int num_tables = std::stoi(s);
+			for (int i = 0; i < num_tables; ++i) {
 
 				file >> s;
 				tables.push_back(s);
@@ -270,13 +272,54 @@ namespace sql {
 			}
 
 			sql::Result* res;
-			std::vector<db::Table*> values;
 			for (auto table : tables) {
 
+				std::vector<db::Table*> table_values;
+
 				full_path = dir / std::filesystem::path(migration_name + "_" + table);
+				std::ifstream file;
 				file.open(full_path.c_str(), std::iostream::in);
 				engine->execute("DELETE FROM " + table);
-				
+
+				std::getline(file, s);
+ 				std::vector values = db::split(s, std::set({ ' ' }));
+
+				std::vector<std::string> columns;
+				for (auto value : values) {
+
+					columns.push_back(value.substr(1, value.size() - 2));
+
+				}
+
+				int i = 0;
+				while (std::getline(file, s)) {
+
+					std::vector values = db::split(s, std::set({ ' ' }));
+
+					db::Table* t = new db::Table(table, columns);
+					table_values.push_back(t);
+					int j = 0;
+					for (auto value : values) {
+
+						table_values[i]->set(columns[j], value.substr(1, value.size() - 2));
+						++j;
+
+					}
+					++i;
+
+				}
+				db::meta_info meta;
+				for (auto col : columns) {
+
+					meta[col] = db::ColumnDescription(table, col, db::datatypes::STRING);
+
+				}
+				this->insert(table, meta, table_values)->execute();
+				for (int i = 0; i < table_values.size(); ++i) {
+
+					delete table_values[i];
+
+				}
 
 			}
 

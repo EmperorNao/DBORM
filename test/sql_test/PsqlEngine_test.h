@@ -143,15 +143,27 @@ TEST(PsqlEngineTest, LoadMigrationTest) {
 	PsqlEngine e("ormtest", "postgres", "password");
 	sql::Session s(&e);
 
+	Result* res;
+
 	s.del(TBL(TestU))->execute();
+	s.del(TBL(TestUVisit))->execute();
+
 	std::cout << "Before migration\n";
-	Result* res = s.select(TBL(TestU), COLUMNS(*))->execute();
+	std::cout << "TestU" << std::endl;
+	res = s.select(TBL(TestU), COLUMNS(*))->execute();
+	res->out();
+	std::cout << "TestUVisit" << std::endl;
+	res = s.select(TBL(TestUVisit), COLUMNS(*))->execute();
 	res->out();
 
 	s.load_migration("P:\\D\\Programming\\DBORM\\migration_test", "test", sql::MigrationFormat::DBORM);
 
 	std::cout << "After migration\n";
+	std::cout << "TestU" << std::endl;
 	res = s.select(TBL(TestU), COLUMNS(*))->execute();
+	res->out();
+	std::cout << "TestUVisit" << std::endl;
+	res = s.select(TBL(TestUVisit), COLUMNS(*))->execute();
 	res->out();
 
 }

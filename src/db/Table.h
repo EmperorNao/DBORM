@@ -83,7 +83,15 @@ namespace db {
 	public:
 
 		std::map<std::string, Column*> container;
-		Table() {};
+		Table(std::string table_name = "", std::vector<std::string> columns = {}) {
+		
+			for (auto col : columns) {
+
+				container[col] = new db::Column(table_name, col, db::datatypes::ColumnType::STRING);
+
+			}
+
+		};
 		Column operator[](std::string name) { return *(this->container[name]); }
 
 		virtual Column* get_real_column(std::string name) { 
