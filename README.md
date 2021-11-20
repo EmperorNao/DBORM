@@ -1,4 +1,4 @@
 # Курсовая по Базам Данных
 C++ ORM
 # Замеры производительности
-![alt text](https://raw.githubusercontent.com/EmperorNao/DBORM/main/benchmark.png)
+![alt text](https://raw.githubusercontent.com/EmperorNao/DBORM/main/benchmark.jpg)
