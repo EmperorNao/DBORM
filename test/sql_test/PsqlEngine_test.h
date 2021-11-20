@@ -185,3 +185,46 @@ TEST(PsqlEngineTest, UpdateTest) {
 	}
 
 }
+
+
+TEST(PsqlEngineTest, GroupByTest) {
+
+	using namespace sql::psql;
+	using namespace test;
+	PsqlEngine e("ormtest", "postgres", "password");
+	sql::Session s(&e);
+
+	try {
+
+		test::TestU u1;
+		SET(u1, name, "First");
+		SET(u1, id, 0);
+		sql::Result* res;
+
+		s.insert(TBL(TestU), &u1)->execute();
+
+		SET(u1, name, "Second");
+		SET(u1, id, 1);
+		s.insert(TBL(TestU), &u1)->execute();
+
+		SET(u1, name, "First");
+		SET(u1, id, 2);
+		s.insert(TBL(TestU), &u1)->execute();
+
+		SET(u1, name, "Second");
+		SET(u1, id, 100);
+		s.insert(TBL(TestU), &u1)->execute();
+
+		res = s.select(TBL(TestU), COLUMNS(name, SUM(id), MAX(id), MIN(id), AVG(id)))->group_by(TBL(TestU), COLUMNS(name))->execute();
+		res->out();
+
+		s.del(TBL(TestU))->execute();
+
+	}
+	catch (std::exception* e) {
+
+		std::cout << e->what();
+
+	}
+
+}

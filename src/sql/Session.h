@@ -39,7 +39,7 @@ namespace sql {
 
 		////void add_info(std::string table, std::map<std::string, db::ColumnDescription> meta);
 		//Session* update(std::string table_name, db::meta_info meta, db::Table* t);
-
+		//std::vector<std::string> get_full_names(db::meta_info, std::vector<std::string>);
 		Session* update(std::string table_name, db::meta_info meta, db::Table* t);
 
 		Session* insert(std::string table_name, db::meta_info meta, std::vector<db::Table*> values);
@@ -65,6 +65,7 @@ namespace sql {
 
 		Session* join(std::string main_table, db::meta_info main_meta, std::string additional_table, db::meta_info add_meta, std::vector<std::string>);
 		Session* where(db::Statement st);
+		Session* group_by(std::string table_name, db::meta_info meta, std::vector<std::string> columns);
 		Result* execute();
 
 		void free_all_result() {

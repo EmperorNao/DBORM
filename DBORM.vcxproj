@@ -44,6 +44,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="benchmark\benchmarking.h" />
     <ClInclude Include="src\sql\Engine.h" />
     <ClInclude Include="src\sql\psql\PsqlEngine.h" />
     <ClInclude Include="src\db\Column.h" />

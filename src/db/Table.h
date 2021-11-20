@@ -11,7 +11,6 @@
 //#include "DataTypes.h"
 
 
-
 namespace db {
 
 	std::vector<std::string> split(std::string s, std::set<char> delimeters);
@@ -45,13 +44,24 @@ namespace db {
 	#define FOREIGN_KEY(name, tablename_on, colname) this->meta[#name].set_fk(tablename_on::table_name, tablename_on::table_name);
 
 	#define SET(object, column_name, value) object.set(#column_name, value);
+	#define SET_TO_POINTER(object, column_name, value) object->set(#column_name, value);
 	#define	GET(object, column_name, type) object.get<type>(#column_name);
+	#define	GET_FROM_POINTER(object, column_name, type) object->get<type>(#column_name);
 	#define	GETS(object, column_name, type) object.get(#column_name);
 
 	#define TBL(classname) classname::table_name, classname::meta
 	#define COLUMNS(...) db::split(#__VA_ARGS__, {' ', ','}) 
 	#define STATEMENT(classname, colname, op, value) (constant_##classname[#colname] op value)
 	#define LIKE(classname, colname, value) (constant_##classname[#colname].like(value))
+
+
+	#define AS_STR(str) #str
+	#define SPLAY(name, column) AS_STR(name(##column##))
+
+	#define MAX(column) SPLAY(MAX, column)
+	#define MIN(column) SPLAY(MIN, column)
+	#define AVG(column) SPLAY(AVG, column)
+	#define SUM(column) SPLAY(SUM, column)
 
 
 	class TableError : public std::exception {
@@ -102,7 +112,7 @@ namespace db {
 			}
 			if (keys.size() != 1) {
 
-				throw TableError("Number of primary keys in table " + table_name + 
+				throw new TableError("Number of primary keys in table " + table_name + 
 					" is wrong : " + std::to_string(keys.size()));
 
 			}
@@ -143,6 +153,11 @@ namespace db {
 		std::string get(std::string name, bool str = true) {
 
 			std::string subs = this->container[name]->get_string();
+			if (not subs.size()) {
+
+				return "\'\'";
+
+			}
 			if (str and (subs.size() > 2) and (subs[0] == '\'') and (subs[subs.size() - 1] == '\'')) {
 
 				return subs.substr(1, subs.size() - 2);

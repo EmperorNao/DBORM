@@ -26,7 +26,8 @@ namespace sql {
 		SELECT,
 		UPDATE,
 		JOIN,
-		WHERE
+		WHERE,
+		GROUP_BY
 	};
 
 	std::string str_query(QueryType type);
@@ -135,6 +136,19 @@ namespace sql {
 			: table_name(_table), meta(_meta), value(_value), Query(UPDATE, q) {};
 		db::Table* get_value() const { return value; };
 		db::meta_info get_meta() const { return meta; };
+		std::string get_table() const { return table_name; }
+
+	};
+
+	class GroupBy : public Query {
+
+	private:
+		std::string table_name;
+		std::vector<std::string> columns;
+	public:
+		GroupBy(std::string _table, std::vector<std::string> _columns, Query* q = nullptr)
+			: table_name(_table), columns(_columns), Query(GROUP_BY, q) {};
+		std::vector<std::string> get_columns() const { return columns; };
 		std::string get_table() const { return table_name; }
 
 	};

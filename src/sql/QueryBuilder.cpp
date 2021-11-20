@@ -1,8 +1,43 @@
 #include "QueryBuilder.h"
+#include <algorithm>
 
 
 namespace sql {	
 	
+	inline std::string QueryBuilder::fullname(std::string table_name, std::string column_name) {
+
+		if (column_name.size() > 4) {
+
+			std::string aggr = column_name.substr(0, 3);
+			if (std::find(aggregation.begin(), aggregation.end(), aggr) != aggregation.end() and
+				column_name[3] == '(' and column_name[column_name.size() - 1] == ')') {
+
+				return aggr + "(" + table_name + "." + column_name.substr(4, column_name.size() - 5) + ")";
+
+			}
+
+		}
+		return table_name + "." + column_name;
+
+	}
+
+	std::string QueryBuilder::join_string(std::vector<std::string> values, std::string symb) {
+
+		std::string res = "";
+		for (int i = 0; i + 1 < values.size(); ++i) {
+
+			res += values[i] + symb;
+
+		}
+		if (values.size()) {
+
+			res += values[values.size() - 1];
+
+		}
+		return res;
+
+	}
+
 	std::string QueryBuilder::build(Query* q) {
 
 		if (q == nullptr) {
@@ -34,6 +69,7 @@ namespace sql {
 		Insert* insert;
 		Delete* del;
 		Update* update;
+		GroupBy* group;
 
 		QueryType start;
 		QueryType cur = q->get_protocol();
@@ -66,7 +102,7 @@ namespace sql {
 					for (int i = 0; i < columns.size() - 1; ++i) {
 
 						if (columns[i] != "*") {
-							query += " " + table_name + "." + columns[i] + ",";
+							query += " " + fullname(table_name, columns[i]) + ",";
 						}
 						else {
 							query += " " + columns[i] + ",";
@@ -76,7 +112,7 @@ namespace sql {
 					if (columns.size()) {
 
 						if (columns[columns.size() - 1] != "*") {
-							query += " " + table_name + "." + columns[columns.size() - 1];
+							query += " " + fullname(table_name, columns[columns.size() - 1]);
 						}
 						else {
 							query += " " + columns[columns.size() - 1];
@@ -242,7 +278,6 @@ namespace sql {
 			}
 			else {
 
-				// TODO insert and delete queries
 				throw new QueryError("Still in develepoment");
 
 			}
@@ -285,6 +320,16 @@ namespace sql {
 				}
 				where = (Where*)q;
 				query += " " + str_query(cur) + " " + where->get_state();
+
+				break;
+			case GROUP_BY:
+				if (start != SELECT) {
+
+					throw new QueryError("You can not do group somewhere other then select");
+
+				}
+				group = (GroupBy*)q;
+				query += " " + str_query(cur) + " " + join_string(group->get_columns(), ", ");
 
 				break;
 			default:

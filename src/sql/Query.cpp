@@ -15,9 +15,10 @@ std::string sql::str_query(QueryType type) {
 		return "JOIN";
 	case WHERE:
 		return "WHERE";
+	case GROUP_BY:
+		return "GROUP BY";
 	default:
 		throw new QueryError("Wrong qury type was provided to str_query");
-
 	}
 
 }

@@ -49,7 +49,8 @@ namespace test {
 				COL(id, db::datatypes::INTEGER)
 				COL(name, db::datatypes::STRING)
 				PRIMARY_KEY(id)
-			END_DECL(TestU)
+			END_DECL(TestU);
+
 		}
 
 	};

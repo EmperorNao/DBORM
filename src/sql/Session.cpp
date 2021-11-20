@@ -126,7 +126,13 @@ namespace sql {
 
 	}
 
+	Session* sql::Session::group_by(std::string table_name, db::meta_info meta, std::vector<std::string> columns) {
 
+		this->current = new GroupBy(table_name, columns, this->current);
+
+		return this;
+
+	}
 
 	void sql::Session::migrate(std::string path_to_save, std::string migration_name, MigrationFormat format) {
 

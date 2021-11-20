@@ -80,4 +80,20 @@ namespace db {
 
 	}
 
+	//std::string aggregation_str(AggregationType a) {
+	//	switch (a)
+	//	{
+	//	case db::MAX:
+	//		return "MAX";
+	//	case db::MIN:
+	//		return "MIN";
+	//	case db::SUM:
+	//		return "SUM";
+	//	case db::AVG:
+	//		return "AVG";
+	//	default:
+	//		throw new AggregationError("Wrong aggregation type");
+	//	}
+	//}
+
 } // end db

@@ -8,16 +8,10 @@
 #include "sql_test/Result_test.h"
 #include "sql_test/PsqlEngine_test.h"
 
-
-static void
-exit_nicely(PGconn* conn)
-{
-    PQfinish(conn);
-    exit(1);
-}
+#include "../benchmark/benchmarking.h"
 
 
-const int DEBUG = 0;
+const int DEBUG = 1;
 
 
 int main(int argc, char* argv[]) {
@@ -25,22 +19,13 @@ int main(int argc, char* argv[]) {
 
 	if (DEBUG == 1) {
 
-        using namespace sql::psql;
+		for (int i = 1000; i < 1000000000; i*= 10) {
 
-        PsqlEngine e("postgres", "postgres", "password");
-        sql::Session s(&e);
-        try {
-            PsqlResult* res = (PsqlResult*)s.select("pg_database", {}, COLUMNS(*))->execute();
-            res->out();
-        }
-        catch (std::exception* e) {
+			std::cout << "ELEMENTS: " << i << std::endl;
+			do_benchmark(i);
+			std::cout << std::endl;
 
-            std::cout << "Exception goes\n" << e->what();
-
-        }
-
-        return 0;
-
+		}
 
 	}
 	else {
