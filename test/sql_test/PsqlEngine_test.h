@@ -40,7 +40,7 @@ TEST(PsqlEngineTest, SelectJoinTest) {
 	using namespace sql::psql;
 	using namespace test;
 
-	PsqlEngine e("postgres", "postgres", "password");
+	PsqlEngine e("ormtest", "postgres", "password");
 	sql::Session s(&e);
 	try {
 		sql::Result* res = s.select(TBL(TestU), COLUMNS(name))->select(TBL(TestUVisit), COLUMNS(money_paid))->join(TBL(TestU), TBL(TestUVisit), COLUMNS(user_id))->execute();
@@ -185,4 +185,3 @@ TEST(PsqlEngineTest, UpdateTest) {
 	}
 
 }
-
