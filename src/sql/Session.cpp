@@ -199,11 +199,13 @@ namespace sql {
 						file << "\"" << columns[j] << "\"" << " ";
 
 					}
+					file << std::endl;
 					for (int i = 0; i < rows; ++i) {
 
 						for (int j = 0; j < cols; ++j) {
 
-							file << "\"" << inside_data[k]->get_value(i, j) << "\"" << " ";
+							std::string data = inside_data[k]->get_value(i, j);
+							file << "\"" << data << "\"" << " ";
 
 						}
 						file << std::endl;
@@ -244,6 +246,42 @@ namespace sql {
 		}
 		throw new MigrationError("Don't find right example");
 		return;
+
+	}
+
+	void sql::Session::load_migration(std::string path, std::string migration_name, MigrationFormat format) {
+
+		if (format == DBORM) {
+
+			std::filesystem::path dir(path);
+			std::filesystem::path filename(migration_name);
+			std::filesystem::path full_path = dir / filename;
+			std::ifstream file;
+			file.open(full_path.c_str(), std::iostream::in);
+			std::vector<std::string> tables;
+
+			std::string s;
+			file >> s;
+			while (file) {
+
+				file >> s;
+				tables.push_back(s);
+
+			}
+
+			sql::Result* res;
+			std::vector<db::Table*> values;
+			for (auto table : tables) {
+
+				full_path = dir / std::filesystem::path(migration_name + "_" + table);
+				file.open(full_path.c_str(), std::iostream::in);
+				engine->execute("DELETE FROM " + table);
+				
+
+			}
+
+		}
+
 
 	}
 

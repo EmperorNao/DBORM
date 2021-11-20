@@ -89,12 +89,73 @@ TEST(PsqlEngineTest, CommitTest) {
 
 TEST(PsqlEngineTest, MigrationTest) {
 
+
 	using namespace sql::psql;
+	using namespace test;
 	PsqlEngine e("ormtest", "postgres", "password");
 	sql::Session s(&e);
-	s.migrate("P:\\D\\Programming\\DBORM\\migration_test", "test", sql::MigrationFormat::DBORM);
+
+	try {
+
+		s.del(TBL(TestU))->execute();
+		s.del(TBL(TestUVisit))->execute();
+
+		test::TestU u1;
+		SET(u1, name, "FirstTestUser");
+		SET(u1, id, 0);
+		s.insert(TBL(TestU), &u1)->execute();
+
+		SET(u1, name, "SecondTestUser");
+		SET(u1, id, 1);
+		s.insert(TBL(TestU), &u1)->execute();
+
+		test::TestUVisit v1;
+
+		SET(v1, id, 0);
+		SET(v1, user_id, 0);
+		SET(v1, day, 3);
+		SET(v1, money_paid, 25.5);
+		s.insert(TBL(TestUVisit), &v1)->execute();
+
+		SET(v1, id, 1);
+		SET(v1, user_id, 0);
+		SET(v1, day, 5);
+		SET(v1, money_paid, 72.6);
+		s.insert(TBL(TestUVisit), &v1)->execute();
+
+		s.migrate("P:\\D\\Programming\\DBORM\\migration_test", "test", sql::MigrationFormat::DBORM);
+
+	}
+	catch(std::exception* e){
+
+		std::cout << e->what() << std::endl;
+
+	}
 
 }
+
+
+TEST(PsqlEngineTest, LoadMigrationTest) {
+
+	using namespace sql::psql;
+	using namespace test;
+	using namespace sql;
+	PsqlEngine e("ormtest", "postgres", "password");
+	sql::Session s(&e);
+
+	s.del(TBL(TestU))->execute();
+	std::cout << "Before migration\n";
+	Result* res = s.select(TBL(TestU), COLUMNS(*))->execute();
+	res->out();
+
+	s.load_migration("P:\\D\\Programming\\DBORM\\migration_test", "test", sql::MigrationFormat::DBORM);
+
+	std::cout << "After migration\n";
+	res = s.select(TBL(TestU), COLUMNS(*))->execute();
+	res->out();
+
+}
+
 
 
 TEST(PsqlEngineTest, InsertDeleteTest) {
@@ -196,6 +257,7 @@ TEST(PsqlEngineTest, GroupByTest) {
 
 	try {
 
+		s.del(TBL(TestU))->execute();
 		test::TestU u1;
 		SET(u1, name, "First");
 		SET(u1, id, 0);

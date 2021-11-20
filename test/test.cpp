@@ -11,7 +11,7 @@
 #include "../benchmark/benchmarking.h"
 
 
-const int DEBUG = 1;
+const int DEBUG = 0;
 
 
 int main(int argc, char* argv[]) {

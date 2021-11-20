@@ -35,6 +35,7 @@ namespace sql {
 		}
 
 		void migrate(std::string path_to_save, std::string file_name, MigrationFormat format);
+		void load_migration(std::string path, std::string file_name, MigrationFormat format);
 
 
 		////void add_info(std::string table, std::map<std::string, db::ColumnDescription> meta);
