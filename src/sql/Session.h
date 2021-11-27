@@ -22,6 +22,7 @@ namespace sql {
 		Session(Engine* e, bool autotrans = false): engine(e), autotransaction(autotrans) { current = nullptr; };
 		~Session() { this->free_all_result(); }
 		void begin() { this->engine->begin(); };
+		void set_iso_level(IsolationLevel l) { this->engine->set_iso_level(l);  }
 		void end() { this->engine->end(); };
 		void commit() { this->engine->commit(); };
 		void rollback() { this->engine->rollback(); };

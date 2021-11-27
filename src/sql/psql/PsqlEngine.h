@@ -232,6 +232,36 @@ namespace sql {
 
 			}
 
+			void set_iso_level(sql::IsolationLevel l) {
+
+				std::string transaction_level = "";
+				switch (l) {
+				case IsolationLevel::ReadUncommitted:
+					transaction_level = "READ COMMITED";
+				case IsolationLevel::ReadCommitted:
+					transaction_level = "READ COMMITED";
+					break;
+				case IsolationLevel::RepeatableRead:
+					transaction_level = "REPEATABLE READ";
+					break;
+				case IsolationLevel::SERIALIZABLE:
+					transaction_level = "SERIALIZABLE";
+					break;
+				}
+
+				PGresult* res = PQexec(connection, ("SET TRANSACTION ISOLATION LEVEL " + transaction_level).c_str() );
+				if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+					std::string err = connection_err();
+					PQclear(res);
+					exit_nicely();
+					throw new EngineError("Error during trying to set transaction level: " + err);
+				}
+
+
+
+			}
+
+
 			Result* execute(Query* q) {
 
 				std::string translated_query = qb.build(q);

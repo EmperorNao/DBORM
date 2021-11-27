@@ -74,6 +74,7 @@ namespace test {
 		void end() {};
 		void commit() {};
 		void rollback() {};
+		void set_iso_level(sql::IsolationLevel l) {};
 
 	};
 

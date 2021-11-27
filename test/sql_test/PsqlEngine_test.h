@@ -302,3 +302,27 @@ TEST(PsqlEngineTest, GroupByTest) {
 	}
 
 }
+
+
+
+TEST(PsqlEngineTest, IsolationLevelTest) {
+
+	using namespace sql::psql;
+	using namespace test;
+	PsqlEngine e("ormtest", "postgres", "password");
+	sql::Session s(&e);
+
+	try {
+
+		s.begin();
+		s.set_iso_level(sql::IsolationLevel::SERIALIZABLE);
+		s.end();
+
+	}
+	catch (std::exception* e) {
+
+		std::cout << e->what();
+
+	}
+
+}

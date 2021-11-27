@@ -9,6 +9,10 @@ namespace sql {
 		DBORM, CSV, JSON
 	};
 
+	enum IsolationLevel {
+		ReadUncommitted, ReadCommitted, RepeatableRead, SERIALIZABLE
+	};
+
 
 	class MigrationError : public std::exception {
 
@@ -104,6 +108,7 @@ namespace sql {
 		virtual void end() = 0;
 		virtual void rollback() = 0;
 		virtual void commit() = 0;
+		virtual void set_iso_level(IsolationLevel l) = 0;
 
 	};
 
